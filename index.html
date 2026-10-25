@@ -223,6 +223,28 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 .authlinks{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
 .linkbtn{border:0;background:transparent;color:var(--hero-ink);text-decoration:underline;padding:6px 0;font-size:.92rem}
 .keep{display:flex;align-items:center;gap:10px;font-size:.9rem;color:var(--hero-muted)}
+.missing .inp,.inp.missing{border-color:var(--danger);box-shadow:0 0 0 1px var(--danger)}
+.field.missing .chips{outline:1.5px solid var(--danger);outline-offset:4px;border-radius:12px}
+.field.missing>label,.field.missing>.flbl{color:var(--danger)}
+.chip.none{color:var(--muted)}
+.chip.none[aria-pressed="true"]{background:var(--surface2);border-color:var(--box);color:var(--muted);font-weight:700}
+.tag.fx{background:var(--surface2);color:var(--muted);border:1px solid var(--line)}
+.menu>button small{margin-left:auto;margin-right:8px;font-weight:400;color:var(--muted);font-size:.85rem}
+.crow{display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid var(--line);min-height:52px}
+.crow:first-child{border-top:0}
+.crow .nm{flex:1;min-width:0;font-weight:700;overflow-wrap:anywhere}
+.crow .nm small{display:block;font-weight:400;font-size:.8rem;color:var(--muted)}
+.crow .mdot{width:14px;height:14px;margin:0}
+.crow .x{border:1px solid var(--line);background:var(--surface);color:var(--danger);border-radius:10px;padding:6px 10px;font-size:.82rem;font-weight:700;flex:none}
+.crow.btn{width:100%;border:0;border-top:1px solid var(--line);background:transparent;text-align:left;color:var(--ink);font:inherit}
+.crow.btn:first-child{border-top:0}
+.crow .amt{font-size:.95rem}
+.swatches{display:flex;flex-wrap:wrap;gap:10px}
+.sw{width:36px;height:36px;border-radius:50%;border:3px solid transparent;box-shadow:0 0 0 1px var(--line)}
+.sw[aria-pressed="true"]{border-color:var(--surface);box-shadow:0 0 0 2.5px var(--ink)}
+.warnbox{background:var(--warm-soft);color:var(--warm);border-radius:12px;padding:12px 14px;font-size:.88rem;margin-bottom:14px}
+.totfix{display:flex;justify-content:space-between;font-size:.9rem;color:var(--muted);margin:12px 2px}
+.totfix b{color:var(--ink);font-family:var(--f-num)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -308,17 +330,17 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   <h3 id="sheet-title">Nouvelle dépense</h3>
 
   <form id="form-exp" autocomplete="off" novalidate hidden>
-    <div class="field"><label for="e-lib">Libellé</label><input class="inp" id="e-lib" maxlength="80" placeholder="Loyer, Navigo, courses…"></div>
-    <div class="field"><label for="e-amt">Montant</label><div class="amtwrap"><input class="inp big" id="e-amt" inputmode="decimal" placeholder="0,00"></div></div>
-    <div class="field"><span class="flbl">Catégorie</span><div class="chips" id="e-cats"></div>
+    <div class="field" id="ef-lib"><label for="e-lib">Libellé</label><input class="inp" id="e-lib" maxlength="80" placeholder="Loyer, Navigo, courses…"></div>
+    <div class="field" id="ef-amt"><label for="e-amt">Montant</label><div class="amtwrap"><input class="inp big" id="e-amt" inputmode="decimal" placeholder="0,00"></div></div>
+    <div class="field" id="ef-cat"><span class="flbl">Catégorie</span><div class="chips" id="e-cats"></div>
       <div class="newcat" id="e-newcat-w" hidden><input class="inp" id="e-newcat" maxlength="30" placeholder="Ex. Location, Cadeaux, Enfants…" aria-label="Nom de la nouvelle catégorie"><button type="button" class="ghost" id="e-newcat-ok">Ajouter</button></div>
     </div>
-    <div class="field"><label for="e-meth">Payé avec</label>
+    <div class="field" id="ef-meth"><label for="e-meth">Payé avec</label>
       <div class="selwrap"><select class="inp" id="e-meth"></select></div>
-      <input class="inp" id="e-meth-other" maxlength="40" placeholder="Nom de la carte" aria-label="Autre moyen de paiement" hidden>
+      <div class="newcat" id="e-newcard-w" hidden><input class="inp" id="e-newcard" maxlength="40" placeholder="Nom de la carte (ex. LCL)" aria-label="Nom de la nouvelle carte"><button type="button" class="ghost" id="e-newcard-ok">Ajouter</button></div>
     </div>
-    <div class="field"><span class="flbl">Type</span><div class="chips" id="e-type">
-      <button type="button" class="chip" data-t="prevue" aria-pressed="true">Prévue</button>
+    <div class="field" id="ef-type"><span class="flbl">Type</span><div class="chips" id="e-type">
+      <button type="button" class="chip" data-t="prevue" aria-pressed="false">Prévue</button>
       <button type="button" class="chip" data-t="imprevue" aria-pressed="false">Imprévue</button>
     </div></div>
     <button type="button" class="switch" id="e-paid" role="switch" aria-checked="false"><span>Déjà payée</span><span class="tg"></span></button>
@@ -343,8 +365,10 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   <div id="form-set" hidden>
     <div id="acc-main">
       <div class="acct"><div class="avatar" id="acc-av">A</div><div><b id="acc-email"></b><span id="acc-since"></span></div></div>
-      <h4>Compte</h4>
+      <h4>Paramétrer mon compte</h4>
       <div class="menu">
+        <button type="button" data-go="acc-cards">Mes cartes bancaires<small id="n-cards"></small></button>
+        <button type="button" data-go="acc-fixes">Mes dépenses fixes<small id="n-fixes"></small></button>
         <button type="button" data-go="acc-pass">Changer mon mot de passe</button>
         <button type="button" data-go="acc-mail">Changer d'adresse e-mail</button>
       </div>
@@ -385,6 +409,46 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
       <div class="err" id="m-err" role="alert"></div>
       <div class="okmsg" id="m-ok" role="status"></div>
       <div class="actions"><button type="submit" class="primary">Envoyer le lien de confirmation</button></div>
+    </form>
+
+    <div id="acc-cards" hidden>
+      <button type="button" class="backbtn">← Retour</button>
+      <div class="warnbox v2warn" hidden>Pour enregistrer vos cartes, exécutez d'abord le fichier supabase-v2-parametres.sql dans Supabase.</div>
+      <p class="note">Espèces est toujours proposé. Ajoutez ici les cartes que vous utilisez : elles apparaîtront dans « Payé avec ».</p>
+      <div class="menu" id="cards-list"></div>
+      <h4>Ajouter une carte</h4>
+      <div class="field" id="cf-name"><label for="c-name">Nom de la carte</label><input class="inp" id="c-name" maxlength="40" placeholder="Ex. LCL, Revolut, Bourso Bank…"></div>
+      <div class="field"><span class="flbl">Couleur</span><div class="swatches" id="c-colors"></div></div>
+      <div class="err" id="c-err" role="alert"></div>
+      <div class="actions"><button type="button" class="primary" id="c-add">Ajouter la carte</button></div>
+    </div>
+
+    <div id="acc-fixes" hidden>
+      <button type="button" class="backbtn">← Retour</button>
+      <div class="warnbox v2warn" hidden>Pour enregistrer vos dépenses fixes, exécutez d'abord le fichier supabase-v2-parametres.sql dans Supabase.</div>
+      <p class="note">Elles sont ajoutées automatiquement à chaque mois, non cochées, à partir du mois choisi. Vous n'avez plus qu'à les cocher une fois payées.</p>
+      <div class="menu" id="fixes-list"></div>
+      <div class="totfix" id="fixes-tot"></div>
+      <div class="actions"><button type="button" class="primary" id="fx-new">+ Ajouter une dépense fixe</button></div>
+    </div>
+
+    <form id="acc-fixe" novalidate hidden>
+      <button type="button" class="backbtn" data-back="acc-fixes">← Retour</button>
+      <div class="field" id="ff-lib"><label for="f-lib">Libellé</label><input class="inp" id="f-lib" maxlength="80" placeholder="Ex. Loyer, Abonnement mobile…"></div>
+      <div class="field" id="ff-amt"><label for="f-amt">Montant mensuel</label><div class="amtwrap"><input class="inp big" id="f-amt" inputmode="decimal" placeholder="0,00"></div></div>
+      <div class="field" id="ff-cat"><label for="f-cat">Catégorie</label><div class="selwrap"><select class="inp" id="f-cat"></select></div>
+        <div class="newcat" id="f-newcat-w" hidden><input class="inp" id="f-newcat" maxlength="30" placeholder="Nom de la catégorie" aria-label="Nom de la nouvelle catégorie"><button type="button" class="ghost" id="f-newcat-ok">Ajouter</button></div>
+      </div>
+      <div class="field" id="ff-meth"><label for="f-meth">Payé avec</label><div class="selwrap"><select class="inp" id="f-meth"></select></div>
+        <div class="newcat" id="f-newcard-w" hidden><input class="inp" id="f-newcard" maxlength="40" placeholder="Nom de la carte" aria-label="Nom de la nouvelle carte"><button type="button" class="ghost" id="f-newcard-ok">Ajouter</button></div>
+      </div>
+      <div class="field"><label for="f-debut">À partir de</label><div class="selwrap"><select class="inp" id="f-debut"></select></div></div>
+      <p class="note" id="f-note"></p>
+      <div class="err" id="f-err" role="alert"></div>
+      <div class="actions">
+        <button type="button" class="danger" id="f-del" hidden>Supprimer</button>
+        <button type="submit" class="primary" id="f-save">Enregistrer</button>
+      </div>
     </form>
 
     <div id="acc-stats" hidden>
@@ -433,7 +497,8 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   const BANK_COLORS = { 'especes':'#2e8b57', 'lcl':'#0a3d8f', 'revolut':'#5a6170', 'hellobank':'#0096d6', 'boursobank':'#d1006a', 'boursorama':'#d1006a', 'nonprecise':'#7f8f8a' };
   const EXTRA = ['#7a4fb5','#c2562f','#a88317','#2f7f8f','#a8456b','#4f7a2e'];
   const slug = m => String(m || 'Non précisé').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
-  const methodColor = m => { const k = slug(m); if (BANK_COLORS[k]) return BANK_COLORS[k]; let h = 0; for (const ch of k) h = (h*31 + ch.charCodeAt(0)) >>> 0; return EXTRA[h % EXTRA.length]; };
+  const autoColor = m => BANK_COLORS[slug(m)] || '';
+  const methodColor = m => { const c = cartes.find(x => x.nom === m); if (c && c.couleur) return c.couleur; return autoColor(m) || hashColor(slug(m), EXTRA); };
   const CIRC = 263.9;
   const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
   let toastT;
@@ -492,6 +557,8 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 
   /* ---------- état ---------- */
   let user = null, all = [], budgets = {}, loaded = false;
+  let cartes = [], fixes = [], v2 = true;
+  const applied = new Set();
   let filter = store.get('carnet-filtre') || 'all';
   const now = new Date();
   let cur = { y: now.getFullYear(), m: now.getMonth() };
@@ -499,20 +566,38 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   const shift = (c,d) => { const t = new Date(c.y, c.m + d, 1); return { y: t.getFullYear(), m: t.getMonth() }; };
   const monthName = c => new Date(c.y, c.m, 1).toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
   const parseAmt = s => { const v = parseFloat(String(s).replace(/[\s €]/g,'').replace(',','.')); return isFinite(v) ? Math.round(v*100)/100 : NaN; };
-  const norm = r => ({ id: r.id, mois: r.mois, libelle: r.libelle, categorie: r.categorie || 'Autre', montant: Number(r.montant) || 0, type: r.type === 'imprevue' ? 'imprevue' : 'prevue', moyen: r.moyen || '', payee: !!r.payee, cree: r.cree });
+  const norm = r => ({ id: r.id, mois: r.mois, libelle: r.libelle, categorie: r.categorie || 'Autre', montant: Number(r.montant) || 0, type: r.type === 'imprevue' ? 'imprevue' : 'prevue', moyen: r.moyen || '', payee: !!r.payee, cree: r.cree, fixe_id: r.fixe_id || null });
   const cacheKey = () => 'carnet-cache-' + (user ? user.id : '');
-  const saveCache = () => store.set(cacheKey(), { all, budgets });
+  const saveCache = () => store.set(cacheKey(), { all, budgets, cartes, fixes });
+  const nowKey = () => { const t = new Date(); return t.getFullYear() + '-' + String(t.getMonth()+1).padStart(2,'0'); };
   const setSync = ok => { $('sync').classList.toggle('off', !ok); $('sync').title = ok ? 'Synchronisé' : 'Hors ligne : données du dernier chargement'; };
 
   async function load(){
-    const [d, b] = await Promise.all([
+    const [d, b, c, f] = await Promise.all([
       sb.from('depenses').select('*').order('cree', { ascending: true }),
-      sb.from('budgets').select('mois,montant')
+      sb.from('budgets').select('mois,montant'),
+      sb.from('cartes').select('*').order('cree', { ascending: true }),
+      sb.from('fixes').select('*').order('cree', { ascending: true })
     ]);
     if (d.error || b.error) { setSync(false); if (!loaded) toast('Impossible de charger vos données. Vérifiez votre connexion.'); return; }
     all = d.data.map(norm);
     budgets = {}; b.data.forEach(r => budgets[r.mois] = Number(r.montant));
+    if (c.error || f.error) { v2 = false; }
+    else {
+      v2 = true;
+      cartes = c.data.map(x => ({ id: x.id, nom: x.nom, couleur: x.couleur || '' }));
+      fixes = f.data.map(x => ({ id: x.id, libelle: x.libelle, montant: Number(x.montant) || 0, categorie: x.categorie, moyen: x.moyen, debut: x.debut }));
+    }
     loaded = true; setSync(true); saveCache(); render();
+    ensureFixes(nowKey()); ensureFixes(key(cur));
+  }
+  // Ajoute au mois les dépenses fixes manquantes (une seule fois par mois, géré par Supabase)
+  async function ensureFixes(k){
+    if (!v2 || !fixes.length || applied.has(k)) return;
+    applied.add(k);
+    const { data, error } = await sb.rpc('appliquer_fixes', { p_mois: k });
+    if (error) { applied.delete(k); console.error(error); return; }
+    if (data > 0) load();
   }
   const fail = (msg, error) => { console.error(error); setSync(navigator.onLine); toast(navigator.onLine ? msg : 'Hors ligne : modification non enregistrée. Réessayez une fois connectée.'); };
 
@@ -589,6 +674,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
         const txt = el('span','rowtxt'); txt.append(el('span','lib', d.libelle));
         const meta = el('span','meta'); const mm = el('span'); const md = el('i','mdot'); md.style.background = methodColor(d.moyen); mm.append(md, document.createTextNode(d.moyen || 'Moyen non précisé')); meta.append(mm);
         meta.append(d.type==='imprevue' ? el('span','tag imp','imprévue') : el('span','tag','prévue'));
+        if (d.fixe_id) meta.append(el('span','tag fx','fixe'));
         txt.append(meta);
         main.append(txt, el('span','amt', eur.format(d.montant)));
         main.addEventListener('click', ()=> openExp(d));
@@ -605,7 +691,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   }
 
   /* ---------- panneaux ---------- */
-  let editing = null, eType = 'prevue', eCat = 'Courses', ePaid = false, delArmed = false;
+  let editing = null, eType = null, eCat = null, ePaid = false, delArmed = false;
   function openSheet(mode, title){
     $('sheet-title').textContent = title;
     $('form-exp').hidden = mode !== 'exp'; $('form-bud').hidden = mode !== 'bud'; $('form-set').hidden = mode !== 'set';
@@ -621,51 +707,91 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   $('scrim').addEventListener('click', closeSheet);
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('sheet').hidden) closeSheet(); });
 
+  /* champs obligatoires */
+  const markMissing = (ids, all_) => all_.forEach(i => $(i).classList.toggle('missing', ids.includes(i)));
+  const clearMissing = id => {
+    $(id).classList.remove('missing');
+    const box = $(id).closest('form, #acc-cards');
+    if (box && !box.querySelector('.missing')) box.querySelectorAll('.err').forEach(e => e.textContent = '');
+  };
+  const EF = ['ef-lib','ef-amt','ef-cat','ef-meth','ef-type'];
+  $('e-lib').addEventListener('input', () => clearMissing('ef-lib'));
+  $('e-amt').addEventListener('input', () => clearMissing('ef-amt'));
+  const capFirst = v => { v = v.trim().replace(/\s+/g,' '); return v.charAt(0).toUpperCase() + v.slice(1); };
+
+  /* catégories */
   let extraCats = [];
-  const allCats = () => [...CATS, ...[...new Set([...all.map(d=>d.categorie), ...extraCats, eCat])].filter(c => c && !CATS.includes(c)).sort((a,b)=>a.localeCompare(b,'fr'))];
+  const allCats = () => [...CATS, ...[...new Set([...all.map(d=>d.categorie), ...fixes.map(f=>f.categorie), ...extraCats, eCat])].filter(c => c && !CATS.includes(c)).sort((a,b)=>a.localeCompare(b,'fr'))];
   function paintChips(){
     const cc = $('e-cats'); cc.textContent='';
+    const none = el('button','chip none','Aucune catégorie'); none.type='button'; none.setAttribute('aria-pressed', !eCat);
+    none.onclick = ()=>{ eCat = null; paintChips(); }; cc.append(none);
     allCats().forEach(c => { const b = el('button','chip'); b.type='button'; b.setAttribute('aria-pressed', c===eCat);
       const dot = el('span','dot'); dot.style.background = catColor(c); b.append(dot, document.createTextNode(c));
-      b.onclick = ()=>{ eCat = c; paintChips(); }; cc.append(b); });
+      b.onclick = ()=>{ eCat = c; clearMissing('ef-cat'); paintChips(); }; cc.append(b); });
     const add = el('button','chip add','+ Nouvelle'); add.type='button'; add.setAttribute('aria-label','Créer une nouvelle catégorie');
     add.onclick = ()=>{ $('e-newcat-w').hidden = false; $('e-newcat').value = ''; $('e-newcat').focus(); };
     cc.append(add);
     document.querySelectorAll('#e-type .chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.t===eType));
     $('e-paid').setAttribute('aria-checked', ePaid);
   }
-  document.querySelectorAll('#e-type .chip').forEach(b => b.onclick = ()=>{ eType = b.dataset.t; paintChips(); });
-  function addCat(){
-    let v = $('e-newcat').value.trim().replace(/\s+/g,' ');
-    if (!v) { $('e-newcat').focus(); return; }
-    v = v.charAt(0).toUpperCase() + v.slice(1);
+  document.querySelectorAll('#e-type .chip').forEach(b => b.onclick = ()=>{ eType = b.dataset.t; clearMissing('ef-type'); paintChips(); });
+  function newCatName(input){
+    const v = capFirst(input.value);
+    if (!v) { input.focus(); return null; }
     const same = allCats().find(c => c.toLowerCase() === v.toLowerCase());
-    eCat = same || v; if (!same) extraCats.push(v);
-    $('e-newcat-w').hidden = true; paintChips();
+    if (!same) extraCats.push(v);
+    return same || v;
   }
+  function addCat(){ const n = newCatName($('e-newcat')); if (!n) return; eCat = n; clearMissing('ef-cat'); $('e-newcat-w').hidden = true; paintChips(); }
   $('e-newcat-ok').onclick = addCat;
   $('e-newcat').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addCat(); } if (e.key === 'Escape') { e.stopPropagation(); $('e-newcat-w').hidden = true; } });
   $('e-paid').onclick = ()=>{ ePaid = !ePaid; paintChips(); };
-  function fillMethods(value){
-    const s = $('e-meth'); s.textContent = '';
-    const extra = [...new Set(all.map(d=>d.moyen).filter(m => m && !METHODS.includes(m)))];
-    [['', 'Non précisé'], ...METHODS.map(m=>[m,m]), ...extra.map(m=>[m,m]), ['__autre', 'Autre…']]
-      .forEach(([v,t]) => { const o = document.createElement('option'); o.value = v; o.textContent = t; s.append(o); });
-    s.value = value || '';
-    $('e-meth-other').hidden = true; $('e-meth-other').value = '';
+
+  /* cartes */
+  const cardNames = current => {
+    const base = v2 ? ['Espèces', ...cartes.map(c => c.nom)] : METHODS;
+    return current && !base.includes(current) ? [...base, current] : base;
+  };
+  function fillMethodSelect(sel, value){
+    sel.textContent = '';
+    const opts = [['', 'Choisir une carte…'], ...cardNames(value).map(m=>[m,m])];
+    if (v2) opts.push(['__new', '+ Ajouter une carte…']);
+    opts.forEach(([v,t]) => { const o = document.createElement('option'); o.value = v; o.textContent = t; sel.append(o); });
+    sel.value = value && cardNames(value).includes(value) ? value : '';
   }
-  $('e-meth').addEventListener('change', () => { const o = $('e-meth').value === '__autre'; $('e-meth-other').hidden = !o; if (o) $('e-meth-other').focus(); });
-  const readMethod = () => $('e-meth').value === '__autre' ? $('e-meth-other').value.trim() : $('e-meth').value;
+  async function addCard(name, color){
+    const n = capFirst(name || '');
+    if (!n) return null;
+    if (n.toLowerCase() === 'espèces' || n.toLowerCase() === 'especes') return 'Espèces';
+    const same = cartes.find(c => c.nom.toLowerCase() === n.toLowerCase());
+    if (same) return same.nom;
+    const { data, error } = await sb.from('cartes').insert({ user_id: user.id, nom: n, couleur: color != null ? color : autoColor(n) }).select().single();
+    if (error) { fail("La carte n'a pas été enregistrée.", error); return null; }
+    cartes.push({ id: data.id, nom: data.nom, couleur: data.couleur || '' }); saveCache(); render();
+    return data.nom;
+  }
+  function wireNewCard(selId, wrapId, inputId, okId, fieldId){
+    $(selId).addEventListener('change', () => {
+      if ($(selId).value === '__new') { $(selId).value = ''; $(wrapId).hidden = false; $(inputId).value = ''; $(inputId).focus(); }
+      else if ($(selId).value) clearMissing(fieldId);
+    });
+    const go = async () => { const n = await addCard($(inputId).value); if (!n) { $(inputId).focus(); return; } fillMethodSelect($(selId), n); $(wrapId).hidden = true; clearMissing(fieldId); toast('Carte « ' + n + ' » ajoutée'); };
+    $(okId).onclick = go;
+    $(inputId).addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go(); } if (e.key === 'Escape') { e.stopPropagation(); $(wrapId).hidden = true; } });
+  }
+  wireNewCard('e-meth','e-newcard-w','e-newcard','e-newcard-ok','ef-meth');
+  const readMethod = () => $('e-meth').value.startsWith('__') ? '' : $('e-meth').value;
 
   function openExp(d){
     editing = d || null; delArmed = false;
     $('e-lib').value = d ? d.libelle : '';
     $('e-amt').value = d ? String(d.montant).replace('.',',') : '';
-    fillMethods(d ? d.moyen : '');
-    eCat = d ? d.categorie : 'Courses'; eType = d ? d.type : 'prevue'; ePaid = d ? d.payee : false;
+    fillMethodSelect($('e-meth'), d ? d.moyen : ''); $('e-newcard-w').hidden = true;
+    eCat = d ? d.categorie : null; eType = d ? d.type : null; ePaid = d ? d.payee : false;
     $('e-save').textContent = d ? 'Enregistrer' : 'Ajouter';
     $('e-del').hidden = !d; $('e-del').textContent = 'Supprimer';
-    $('e-err').textContent = ''; $('e-newcat-w').hidden = true;
+    $('e-err').textContent = ''; $('e-newcat-w').hidden = true; markMissing([], EF);
     paintChips(); openSheet('exp', d ? 'Modifier la dépense' : 'Nouvelle dépense');
     if (!d) setTimeout(()=>$('e-lib').focus(), 260);
   }
@@ -673,10 +799,20 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 
   $('form-exp').addEventListener('submit', async ev => {
     ev.preventDefault();
-    const lib = $('e-lib').value.trim(); const amt = parseAmt($('e-amt').value);
-    if (!lib) { $('e-err').textContent = 'Indiquez un libellé.'; $('e-lib').focus(); return; }
-    if (!isFinite(amt) || amt < 0) { $('e-err').textContent = 'Indiquez un montant valide, par exemple 12,50.'; $('e-amt').focus(); return; }
-    const data = { libelle: lib, montant: amt, categorie: eCat, type: eType, moyen: readMethod(), payee: ePaid };
+    const lib = $('e-lib').value.trim(); const amt = parseAmt($('e-amt').value); const meth = readMethod();
+    const miss = [], names = [];
+    if (!lib) { miss.push('ef-lib'); names.push('le libellé'); }
+    if (!(amt > 0)) { miss.push('ef-amt'); names.push('le montant'); }
+    if (!eCat) { miss.push('ef-cat'); names.push('la catégorie'); }
+    if (!meth) { miss.push('ef-meth'); names.push('la carte utilisée'); }
+    if (!eType) { miss.push('ef-type'); names.push('le type (prévue ou imprévue)'); }
+    if (miss.length) {
+      markMissing(miss, EF);
+      $('e-err').textContent = 'À compléter : ' + names.join(', ') + '.';
+      if (miss[0] === 'ef-lib') $('e-lib').focus(); else if (miss[0] === 'ef-amt') $('e-amt').focus(); else if (miss[0] === 'ef-meth') $('e-meth').focus();
+      return;
+    }
+    const data = { libelle: lib, montant: amt, categorie: eCat, type: eType, moyen: meth, payee: ePaid };
     const was = editing; closeSheet();
     if (was) {
       const { data: row, error } = await sb.from('depenses').update(data).eq('id', was.id).select().single();
@@ -726,8 +862,8 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   $('b-del').onclick = ()=>{ closeSheet(); saveBudget(null); };
 
   /* navigation */
-  $('prev').onclick = ()=>{ cur = shift(cur,-1); render(); };
-  $('next').onclick = ()=>{ cur = shift(cur, 1); render(); };
+  $('prev').onclick = ()=>{ cur = shift(cur,-1); render(); ensureFixes(key(cur)); };
+  $('next').onclick = ()=>{ cur = shift(cur, 1); render(); ensureFixes(key(cur)); };
   document.querySelectorAll('.seg button').forEach(b => b.onclick = ()=>{ filter = b.dataset.f; store.set('carnet-filtre', filter); render(); });
 
   $('copy').onclick = async ()=>{
@@ -745,8 +881,8 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   };
 
   /* ---------- Mon compte ---------- */
-  const SUBS = ['acc-main','acc-pass','acc-mail','acc-del','acc-stats'];
-  const TITLES = { 'acc-main':'Mon compte', 'acc-pass':'Changer mon mot de passe', 'acc-mail':"Changer d'adresse e-mail", 'acc-del':'Supprimer mon compte', 'acc-stats':'Comparer les mois' };
+  const SUBS = ['acc-main','acc-pass','acc-mail','acc-del','acc-stats','acc-cards','acc-fixes','acc-fixe'];
+  const TITLES = { 'acc-main':'Mon compte', 'acc-pass':'Changer mon mot de passe', 'acc-mail':"Changer d'adresse e-mail", 'acc-del':'Supprimer mon compte', 'acc-stats':'Comparer les mois', 'acc-cards':'Mes cartes bancaires', 'acc-fixes':'Mes dépenses fixes', 'acc-fixe':'Dépense fixe' };
   function showSub(id){
     SUBS.forEach(s => $(s).hidden = s !== id);
     $('sheet-title').textContent = TITLES[id]; $('sheet').scrollTop = 0;
@@ -755,7 +891,140 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     if (id === 'acc-mail') { $('m-new').value = ''; setTimeout(()=>$('m-new').focus(), 50); }
     if (id === 'acc-del') { $('d-confirm').value = ''; }
     if (id === 'acc-stats') drawStats();
+    if (id === 'acc-cards') renderCards();
+    if (id === 'acc-fixes') renderFixes();
+    document.querySelectorAll('.v2warn').forEach(w => w.hidden = v2);
+    $('c-add').disabled = !v2; $('fx-new').disabled = !v2;
   }
+  function updateCounts(){
+    $('n-cards').textContent = (v2 ? cartes.length + 1 : '') + '';
+    $('n-fixes').textContent = v2 && fixes.length ? fixes.length + ' · ' + eur.format(fixes.reduce((t,f)=>t+f.montant,0)) + '/mois' : '';
+  }
+
+  /* ---------- Mes cartes ---------- */
+  const SWATCHES = ['#0a3d8f','#0096d6','#5a6170','#d1006a','#2e8b57','#7a4fb5','#c2562f','#a88317','#2f7f8f','#1f2328'];
+  let cColor = SWATCHES[0], cColorManual = false;
+  function paintSwatches(){
+    const w = $('c-colors'); w.textContent = '';
+    SWATCHES.forEach(c => { const b = el('button','sw'); b.type = 'button'; b.style.background = c; b.setAttribute('aria-pressed', c === cColor); b.setAttribute('aria-label', 'Couleur ' + c);
+      b.onclick = () => { cColor = c; cColorManual = true; paintSwatches(); }; w.append(b); });
+  }
+  $('c-name').addEventListener('input', () => { clearMissing('cf-name'); $('c-err').textContent = ''; const a = autoColor($('c-name').value); if (a && !cColorManual) { cColor = a; paintSwatches(); } });
+  function renderCards(){
+    const list = $('cards-list'); list.textContent = '';
+    const row = (nom, color, sub, onDel) => {
+      const r = el('div','crow'); const dot = el('span','mdot'); dot.style.background = color;
+      const nm = el('div','nm', nom); nm.append(el('small', null, sub)); r.append(dot, nm);
+      if (onDel) { const x = el('button','x','Supprimer'); x.type = 'button'; let armed = false;
+        x.onclick = async () => { if (!armed) { armed = true; x.textContent = 'Confirmer'; return; } await onDel(); }; r.append(x); }
+      list.append(r);
+    };
+    const used = n => { const k = all.filter(d => d.moyen === n).length; return k ? k + ' dépense' + (k > 1 ? 's' : '') : 'Pas encore utilisée'; };
+    row('Espèces', methodColor('Espèces'), 'Toujours disponible');
+    cartes.forEach(c => row(c.nom, methodColor(c.nom), used(c.nom), async () => {
+      const { error } = await sb.from('cartes').delete().eq('id', c.id);
+      if (error) return fail("La carte n'a pas été supprimée.", error);
+      cartes = cartes.filter(x => x.id !== c.id); saveCache(); render(); renderCards(); updateCounts();
+      toast('Carte supprimée. Les dépenses déjà payées avec gardent son nom.');
+    }));
+    $('c-name').value = ''; cColor = SWATCHES[0]; cColorManual = false; paintSwatches(); updateCounts();
+  }
+  $('c-add').onclick = async () => {
+    const n = $('c-name').value.trim();
+    if (!n) { $('cf-name').classList.add('missing'); $('c-err').textContent = 'Indiquez le nom de la carte.'; $('c-name').focus(); return; }
+    if (cartes.some(c => c.nom.toLowerCase() === n.toLowerCase()) || /^esp[eè]ces$/i.test(n)) { $('c-err').textContent = 'Cette carte est déjà dans la liste.'; return; }
+    const r = await addCard(n, cColor);
+    if (r) { renderCards(); toast('Carte « ' + r + ' » ajoutée'); }
+  };
+
+  /* ---------- Mes dépenses fixes ---------- */
+  let fEditing = null, fDelArmed = false;
+  const FF = ['ff-lib','ff-amt','ff-cat','ff-meth'];
+  const monthLbl = k => { const [y, m] = k.split('-').map(Number); return new Date(y, m - 1, 1).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' }); };
+  function renderFixes(){
+    const list = $('fixes-list'); list.textContent = '';
+    if (!fixes.length) { const r = el('div','crow'); r.append(el('div','nm', 'Aucune dépense fixe pour l’instant.')); list.append(r); }
+    fixes.forEach(f => {
+      const b = el('button','crow btn'); b.type = 'button';
+      const dot = el('span','mdot'); dot.style.background = catColor(f.categorie);
+      const nm = el('div','nm', f.libelle); nm.append(el('small', null, f.categorie + ' · ' + f.moyen + ' · depuis ' + monthLbl(f.debut)));
+      b.append(dot, nm, el('span','amt', eur.format(f.montant)));
+      b.onclick = () => openFixe(f); list.append(b);
+    });
+    const t = $('fixes-tot'); t.textContent = '';
+    if (fixes.length) { t.append(el('span', null, 'Total des dépenses fixes'), el('b', null, eur.format(fixes.reduce((a, f) => a + f.montant, 0)) + ' / mois')); }
+    updateCounts();
+  }
+  function fillCatSelect(sel, value){
+    sel.textContent = '';
+    [['', 'Choisir une catégorie…'], ...allCats().map(c => [c, c]), ['__new', '+ Nouvelle catégorie…']]
+      .forEach(([v, t]) => { const o = document.createElement('option'); o.value = v; o.textContent = t; sel.append(o); });
+    sel.value = value || '';
+  }
+  $('f-cat').addEventListener('change', () => {
+    if ($('f-cat').value === '__new') { $('f-cat').value = ''; $('f-newcat-w').hidden = false; $('f-newcat').value = ''; $('f-newcat').focus(); }
+    else if ($('f-cat').value) clearMissing('ff-cat');
+  });
+  const addFixCat = () => { const n = newCatName($('f-newcat')); if (!n) return; fillCatSelect($('f-cat'), n); $('f-newcat-w').hidden = true; clearMissing('ff-cat'); };
+  $('f-newcat-ok').onclick = addFixCat;
+  $('f-newcat').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addFixCat(); } if (e.key === 'Escape') { e.stopPropagation(); $('f-newcat-w').hidden = true; } });
+  wireNewCard('f-meth','f-newcard-w','f-newcard','f-newcard-ok','ff-meth');
+  $('f-lib').addEventListener('input', () => clearMissing('ff-lib'));
+  $('f-amt').addEventListener('input', () => clearMissing('ff-amt'));
+
+  function openFixe(f){
+    fEditing = f || null; fDelArmed = false;
+    $('f-lib').value = f ? f.libelle : '';
+    $('f-amt').value = f ? String(f.montant).replace('.', ',') : '';
+    fillCatSelect($('f-cat'), f ? f.categorie : ''); $('f-newcat-w').hidden = true;
+    fillMethodSelect($('f-meth'), f ? f.moyen : ''); $('f-newcard-w').hidden = true;
+    const ds = $('f-debut'); ds.textContent = '';
+    const start = f && f.debut < nowKey() ? f.debut : nowKey();
+    let [y, m] = start.split('-').map(Number); const ks = [];
+    while (ks.length < 14) { const k = y + '-' + String(m).padStart(2, '0'); ks.push(k); if (k >= nowKey() && ks.length >= 12 && (!f || k >= f.debut)) break; m++; if (m > 12) { m = 1; y++; } }
+    ks.forEach(k => { const o = document.createElement('option'); o.value = k; const [yy, mm] = k.split('-').map(Number); o.textContent = new Date(yy, mm - 1, 1).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }); ds.append(o); });
+    ds.value = f ? f.debut : nowKey();
+    $('f-note').textContent = f ? 'Les changements s’appliquent aussi aux mois déjà créés à partir de ce mois-ci, tant que la dépense n’est pas cochée.'
+                                : 'Elle sera ajoutée tout de suite au mois choisi, puis à chaque nouveau mois.';
+    $('f-del').hidden = !f; $('f-del').textContent = 'Supprimer'; $('f-err').textContent = ''; markMissing([], FF);
+    showSub('acc-fixe'); $('sheet-title').textContent = f ? 'Modifier la dépense fixe' : 'Nouvelle dépense fixe';
+    if (!f) setTimeout(() => $('f-lib').focus(), 60);
+  }
+  $('fx-new').onclick = () => openFixe(null);
+
+  $('acc-fixe').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const lib = $('f-lib').value.trim(), amt = parseAmt($('f-amt').value), cat = $('f-cat').value.startsWith('__') ? '' : $('f-cat').value;
+    const meth = $('f-meth').value.startsWith('__') ? '' : $('f-meth').value, debut = $('f-debut').value;
+    const miss = [], names = [];
+    if (!lib) { miss.push('ff-lib'); names.push('le libellé'); }
+    if (!(amt > 0)) { miss.push('ff-amt'); names.push('le montant'); }
+    if (!cat) { miss.push('ff-cat'); names.push('la catégorie'); }
+    if (!meth) { miss.push('ff-meth'); names.push('la carte utilisée'); }
+    if (miss.length) { markMissing(miss, FF); $('f-err').textContent = 'À compléter : ' + names.join(', ') + '.'; return; }
+    $('f-save').disabled = true;
+    const data = { libelle: lib, montant: amt, categorie: cat, moyen: meth, debut };
+    let error;
+    if (fEditing) {
+      ({ error } = await sb.from('fixes').update(data).eq('id', fEditing.id));
+      if (!error) ({ error } = await sb.from('depenses').update({ libelle: lib, montant: amt, categorie: cat, moyen: meth }).eq('fixe_id', fEditing.id).eq('payee', false).gte('mois', nowKey()));
+    } else {
+      ({ error } = await sb.from('fixes').insert(Object.assign({ user_id: user.id }, data)));
+    }
+    $('f-save').disabled = false;
+    if (error) { $('f-err').textContent = "L'enregistrement n'a pas abouti. Vérifiez votre connexion et réessayez."; console.error(error); return; }
+    applied.clear(); await load(); showSub('acc-fixes');
+    toast(fEditing ? 'Dépense fixe modifiée' : 'Dépense fixe ajoutée');
+  });
+  $('f-del').onclick = async () => {
+    if (!fDelArmed) { fDelArmed = true; $('f-del').textContent = 'Confirmer'; return; }
+    const id = fEditing.id;
+    let { error } = await sb.from('depenses').delete().eq('fixe_id', id).eq('payee', false).gte('mois', nowKey());
+    if (!error) ({ error } = await sb.from('fixes').delete().eq('id', id));
+    if (error) { $('f-err').textContent = "La suppression n'a pas abouti. Réessayez."; console.error(error); return; }
+    await load(); showSub('acc-fixes');
+    toast('Dépense fixe supprimée. Les mois passés et les dépenses cochées sont conservés.');
+  };
 
   /* ---------- graphique comparatif ---------- */
   let stMode = store.get('carnet-st-mode') || 'meth', stRange = store.get('carnet-st-range') || 6;
@@ -826,11 +1095,11 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     $('acc-email').textContent = user.email || '';
     $('acc-av').textContent = (user.email || '?').charAt(0);
     $('acc-since').textContent = user.created_at ? 'Compte créé le ' + new Date(user.created_at).toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' }) : '';
-    $('s-confirm').hidden = true; pending = null;
+    $('s-confirm').hidden = true; pending = null; updateCounts();
     openSheet('set', 'Mon compte'); showSub('acc-main');
   };
   document.querySelectorAll('[data-go]').forEach(b => b.onclick = () => showSub(b.dataset.go));
-  document.querySelectorAll('#form-set .backbtn').forEach(b => b.onclick = () => showSub('acc-main'));
+  document.querySelectorAll('#form-set .backbtn').forEach(b => b.onclick = () => showSub(b.dataset.back || 'acc-main'));
 
   $('acc-pass').addEventListener('submit', async ev => {
     ev.preventDefault();
@@ -867,7 +1136,9 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   $('s-export').onclick = ()=>{
     const out = { format: 'carnet-depenses-v1', exporte_le: new Date().toISOString(),
       depenses: all.map(({ mois, libelle, categorie, montant, type, moyen, payee }) => ({ mois, libelle, categorie, montant, type, moyen, payee })),
-      budgets: Object.entries(budgets).map(([mois, montant]) => ({ mois, montant })) };
+      budgets: Object.entries(budgets).map(([mois, montant]) => ({ mois, montant })),
+      cartes: cartes.map(({ nom, couleur }) => ({ nom, couleur })),
+      fixes: fixes.map(({ libelle, montant, categorie, moyen, debut }) => ({ libelle, montant, categorie, moyen, debut })) };
     const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
     a.download = 'carnet-depenses-' + new Date().toISOString().slice(0,10) + '.json';
@@ -885,8 +1156,14 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
         montant: Math.max(0, Number(d.montant) || 0), type: d.type === 'imprevue' ? 'imprevue' : 'prevue', moyen: String(d.moyen || ''), payee: !!d.payee }));
       const bud = (Array.isArray(j.budgets) ? j.budgets : []).filter(b => b && /^\d{4}-\d{2}$/.test(b.mois) && isFinite(Number(b.montant)))
         .map(b => ({ user_id: user.id, mois: b.mois, montant: Number(b.montant) }));
-      pending = { dep, bud };
-      $('s-confirm-txt').textContent = dep.length + ' dépense' + (dep.length>1?'s':'') + ' et ' + bud.length + ' budget' + (bud.length>1?'s':'') + ' seront ajoutés à vos données. Les budgets des mêmes mois seront remplacés.';
+      const crd = v2 && Array.isArray(j.cartes) ? j.cartes.filter(c => c && c.nom).map(c => ({ user_id: user.id, nom: String(c.nom).slice(0,40), couleur: /^#[0-9a-fA-F]{6}$/.test(c.couleur || '') ? c.couleur : '' })) : [];
+      const fx = v2 && Array.isArray(j.fixes) ? j.fixes.filter(f => f && f.libelle && Number(f.montant) > 0 && f.categorie && f.moyen && /^\d{4}-\d{2}$/.test(f.debut))
+        .map(f => ({ user_id: user.id, libelle: String(f.libelle).slice(0,80), montant: Number(f.montant), categorie: String(f.categorie).slice(0,30), moyen: String(f.moyen).slice(0,40), debut: f.debut })) : [];
+      pending = { dep, bud, crd, fx };
+      const parts = [dep.length + ' dépense' + (dep.length>1?'s':''), bud.length + ' budget' + (bud.length>1?'s':'')];
+      if (crd.length) parts.push(crd.length + ' carte' + (crd.length>1?'s':''));
+      if (fx.length) parts.push(fx.length + ' dépense' + (fx.length>1?'s':'') + ' fixe' + (fx.length>1?'s':''));
+      $('s-confirm-txt').textContent = parts.join(', ') + ' seront ajoutés à vos données. Les budgets des mêmes mois seront remplacés.';
       $('s-confirm').hidden = false;
     } catch(e){ $('s-err').textContent = "Ce fichier n'est pas un export du carnet de dépenses."; }
   });
@@ -894,11 +1171,15 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   $('s-go').onclick = async ()=>{
     if (!pending) return;
     $('s-go').disabled = true;
-    const { dep, bud } = pending;
+    const { dep, bud, crd, fx } = pending;
     const r1 = dep.length ? await sb.from('depenses').insert(dep) : { error: null };
     const r2 = bud.length ? await sb.from('budgets').upsert(bud, { onConflict: 'user_id,mois' }) : { error: null };
+    const r3 = crd.length ? await sb.from('cartes').upsert(crd, { onConflict: 'user_id,nom', ignoreDuplicates: true }) : { error: null };
+    const r4 = fx.length ? await sb.from('fixes').insert(fx) : { error: null };
     $('s-go').disabled = false;
-    if (r1.error || r2.error) { $('s-err').textContent = "L'import n'a pas abouti. Vérifiez votre connexion et réessayez."; console.error(r1.error || r2.error); return; }
+    const er = r1.error || r2.error || r3.error || r4.error;
+    if (er) { $('s-err').textContent = "L'import n'a pas abouti. Vérifiez votre connexion et réessayez."; console.error(er); return; }
+    applied.clear();
     pending = null; closeSheet(); toast('Import terminé'); load();
   };
   $('s-logout').onclick = async ()=>{ closeSheet(); await sb.auth.signOut({ scope: 'local' }); };
@@ -961,13 +1242,13 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     $('auth').hidden = true; $('app').hidden = false;
     if (changed) {
       const c = store.get(cacheKey());
-      if (c && Array.isArray(c.all)) { all = c.all; budgets = c.budgets || {}; loaded = true; setSync(false); }
+      if (c && Array.isArray(c.all)) { all = c.all; budgets = c.budgets || {}; cartes = c.cartes || []; fixes = c.fixes || []; loaded = true; setSync(false); }
       else { all = []; budgets = {}; loaded = false; }
       render(); load();
     }
   }
   function showAuth(){
-    user = null; all = []; budgets = {}; loaded = false;
+    user = null; all = []; budgets = {}; cartes = []; fixes = []; applied.clear(); loaded = false;
     $('app').hidden = true; $('auth').hidden = false; $('a-pass').value = '';
     if (mode === 'recovery') return;
     setMode('login');
