@@ -164,9 +164,9 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 .field>label,.field>.flbl{font-size:.82rem;font-weight:700;color:var(--muted)}
 .inp{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .inp::placeholder{color:var(--muted);opacity:.8}
-.inp.big{font-family:var(--f-num);font-weight:700;font-size:1.5rem;padding:10px 40px 10px 14px}
+.inp.big{font-family:var(--f-num);font-weight:700;font-size:1.5rem;padding:10px 86px 10px 14px}
 .amtwrap,.selwrap,.pw{position:relative}
-.amtwrap::after{content:"€";position:absolute;right:16px;top:50%;transform:translateY(-50%);font-family:var(--f-num);font-weight:700;font-size:1.3rem;color:var(--muted)}
+.amtwrap::after{content:attr(data-sym);position:absolute;right:16px;top:50%;transform:translateY(-50%);font-family:var(--f-num);font-weight:700;font-size:1.3rem;color:var(--muted)}
 .selwrap select{-webkit-appearance:none;appearance:none;padding-right:42px}
 .selwrap::after{content:"";position:absolute;right:18px;top:50%;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:translateY(-70%) rotate(45deg);pointer-events:none}
 .pw .inp{padding-right:52px}
@@ -228,6 +228,8 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 .field.missing>label,.field.missing>.flbl{color:var(--danger)}
 .chip.none{color:var(--muted)}
 .chip.none[aria-pressed="true"]{background:var(--surface2);border-color:var(--box);color:var(--muted);font-weight:700}
+.curok{color:var(--accent);font-weight:700;font-size:1.1rem;flex:none}
+.crow.btn[aria-pressed="true"]::after{display:none}
 .tag.fx{background:var(--surface2);color:var(--muted);border:1px solid var(--line)}
 .menu>button small{margin-left:auto;margin-right:8px;font-weight:400;color:var(--muted);font-size:.85rem}
 .crow{display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid var(--line);min-height:52px}
@@ -331,7 +333,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 
   <form id="form-exp" autocomplete="off" novalidate hidden>
     <div class="field" id="ef-lib"><label for="e-lib">Libellé</label><input class="inp" id="e-lib" maxlength="80" placeholder="Loyer, Navigo, courses…"></div>
-    <div class="field" id="ef-amt"><label for="e-amt">Montant</label><div class="amtwrap"><input class="inp big" id="e-amt" inputmode="decimal" placeholder="0,00"></div></div>
+    <div class="field" id="ef-amt"><label for="e-amt">Montant</label><div class="amtwrap" data-sym="€"><input class="inp big" id="e-amt" inputmode="decimal" placeholder="0,00"></div></div>
     <div class="field" id="ef-cat"><span class="flbl">Catégorie</span><div class="chips" id="e-cats"></div>
       <div class="newcat" id="e-newcat-w" hidden><input class="inp" id="e-newcat" maxlength="30" placeholder="Ex. Location, Cadeaux, Enfants…" aria-label="Nom de la nouvelle catégorie"><button type="button" class="ghost" id="e-newcat-ok">Ajouter</button></div>
     </div>
@@ -352,7 +354,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   </form>
 
   <form id="form-bud" autocomplete="off" novalidate hidden>
-    <div class="field"><label for="b-amt">Budget pour <span id="b-month"></span></label><div class="amtwrap"><input class="inp big" id="b-amt" inputmode="decimal" placeholder="ex. 1 400"></div></div>
+    <div class="field"><label for="b-amt">Budget pour <span id="b-month"></span></label><div class="amtwrap" data-sym="€"><input class="inp big" id="b-amt" inputmode="decimal" placeholder="ex. 1 400"></div></div>
     <p class="note">Le reste se calcule à partir de ce budget. Sans budget, il se calcule à partir de la somme de vos dépenses.</p>
     <div class="err" id="b-err" role="alert"></div>
     <div class="actions">
@@ -369,6 +371,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
       <div class="menu">
         <button type="button" data-go="acc-cards">Mes cartes bancaires<small id="n-cards"></small></button>
         <button type="button" data-go="acc-fixes">Mes dépenses fixes<small id="n-fixes"></small></button>
+        <button type="button" data-go="acc-cur">Ma monnaie<small id="n-cur"></small></button>
         <button type="button" data-go="acc-pass">Changer mon mot de passe</button>
         <button type="button" data-go="acc-mail">Changer d'adresse e-mail</button>
       </div>
@@ -435,7 +438,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     <form id="acc-fixe" novalidate hidden>
       <button type="button" class="backbtn" data-back="acc-fixes">← Retour</button>
       <div class="field" id="ff-lib"><label for="f-lib">Libellé</label><input class="inp" id="f-lib" maxlength="80" placeholder="Ex. Loyer, Abonnement mobile…"></div>
-      <div class="field" id="ff-amt"><label for="f-amt">Montant mensuel</label><div class="amtwrap"><input class="inp big" id="f-amt" inputmode="decimal" placeholder="0,00"></div></div>
+      <div class="field" id="ff-amt"><label for="f-amt">Montant mensuel</label><div class="amtwrap" data-sym="€"><input class="inp big" id="f-amt" inputmode="decimal" placeholder="0,00"></div></div>
       <div class="field" id="ff-cat"><label for="f-cat">Catégorie</label><div class="selwrap"><select class="inp" id="f-cat"></select></div>
         <div class="newcat" id="f-newcat-w" hidden><input class="inp" id="f-newcat" maxlength="30" placeholder="Nom de la catégorie" aria-label="Nom de la nouvelle catégorie"><button type="button" class="ghost" id="f-newcat-ok">Ajouter</button></div>
       </div>
@@ -450,6 +453,13 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
         <button type="submit" class="primary" id="f-save">Enregistrer</button>
       </div>
     </form>
+
+    <div id="acc-cur" hidden>
+      <button type="button" class="backbtn">← Retour</button>
+      <p class="note">La monnaie change l’affichage de tous les montants. Les montants déjà saisis ne sont pas convertis : 100 restent 100.</p>
+      <div class="menu" id="cur-list"></div>
+      <div class="err" id="cur-err" role="alert" style="margin-top:12px"></div>
+    </div>
 
     <div id="acc-stats" hidden>
       <button type="button" class="backbtn">← Retour</button>
@@ -487,7 +497,24 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 <script>
 (function(){
   const $ = id => document.getElementById(id);
-  const eur = new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR'});
+  /* Monnaie : réglée par utilisateur (enregistrée dans son compte Supabase) */
+  const CURRENCIES = [
+    ['EUR','Euro'], ['MAD','Dirham marocain'], ['XOF','Franc CFA (Afrique de l’Ouest)'], ['XAF','Franc CFA (Afrique centrale)'],
+    ['TND','Dinar tunisien'], ['DZD','Dinar algérien'], ['USD','Dollar américain'], ['CAD','Dollar canadien'],
+    ['GBP','Livre sterling'], ['CHF','Franc suisse']
+  ];
+  let CUR = 'EUR', SYM = '€';
+  let eur = new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR'});
+  const eur0 = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 });
+  const money0 = v => eur0.format(v) + '\u202f' + SYM;
+  function setCurrency(code){
+    if (!CURRENCIES.some(c => c[0] === code)) code = 'EUR';
+    CUR = code;
+    eur = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: code });
+    const part = eur.formatToParts(0).find(x => x.type === 'currency');
+    SYM = part ? part.value : code;
+    document.querySelectorAll('.amtwrap').forEach(w => w.dataset.sym = SYM);
+  }
   const CATS = ['Logement','Courses','Transport','Abonnements','Santé','Loisirs','Épargne','Autre'];
   const METHODS = ['Espèces','LCL','Revolut','Hello Bank','Bourso Bank'];
   const hashColor = (k, pal) => { let h = 0; for (const ch of String(k)) h = (h*31 + ch.charCodeAt(0)) >>> 0; return pal[h % pal.length]; };
@@ -565,7 +592,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   const key = c => c.y + '-' + String(c.m+1).padStart(2,'0');
   const shift = (c,d) => { const t = new Date(c.y, c.m + d, 1); return { y: t.getFullYear(), m: t.getMonth() }; };
   const monthName = c => new Date(c.y, c.m, 1).toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
-  const parseAmt = s => { const v = parseFloat(String(s).replace(/[\s €]/g,'').replace(',','.')); return isFinite(v) ? Math.round(v*100)/100 : NaN; };
+  const parseAmt = s => { const v = parseFloat(String(s).replace(/[^\d,.\-]/g,'').replace(',','.')); return isFinite(v) ? Math.round(v*100)/100 : NaN; };
   const norm = r => ({ id: r.id, mois: r.mois, libelle: r.libelle, categorie: r.categorie || 'Autre', montant: Number(r.montant) || 0, type: r.type === 'imprevue' ? 'imprevue' : 'prevue', moyen: r.moyen || '', payee: !!r.payee, cree: r.cree, fixe_id: r.fixe_id || null });
   const cacheKey = () => 'carnet-cache-' + (user ? user.id : '');
   const saveCache = () => store.set(cacheKey(), { all, budgets, cartes, fixes });
@@ -881,8 +908,8 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   };
 
   /* ---------- Mon compte ---------- */
-  const SUBS = ['acc-main','acc-pass','acc-mail','acc-del','acc-stats','acc-cards','acc-fixes','acc-fixe'];
-  const TITLES = { 'acc-main':'Mon compte', 'acc-pass':'Changer mon mot de passe', 'acc-mail':"Changer d'adresse e-mail", 'acc-del':'Supprimer mon compte', 'acc-stats':'Comparer les mois', 'acc-cards':'Mes cartes bancaires', 'acc-fixes':'Mes dépenses fixes', 'acc-fixe':'Dépense fixe' };
+  const SUBS = ['acc-main','acc-pass','acc-mail','acc-del','acc-stats','acc-cards','acc-fixes','acc-fixe','acc-cur'];
+  const TITLES = { 'acc-main':'Mon compte', 'acc-pass':'Changer mon mot de passe', 'acc-mail':"Changer d'adresse e-mail", 'acc-del':'Supprimer mon compte', 'acc-stats':'Comparer les mois', 'acc-cards':'Mes cartes bancaires', 'acc-fixes':'Mes dépenses fixes', 'acc-fixe':'Dépense fixe', 'acc-cur':'Ma monnaie' };
   function showSub(id){
     SUBS.forEach(s => $(s).hidden = s !== id);
     $('sheet-title').textContent = TITLES[id]; $('sheet').scrollTop = 0;
@@ -893,10 +920,28 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     if (id === 'acc-stats') drawStats();
     if (id === 'acc-cards') renderCards();
     if (id === 'acc-fixes') renderFixes();
+    if (id === 'acc-cur') renderCurrencies();
     document.querySelectorAll('.v2warn').forEach(w => w.hidden = v2);
     $('c-add').disabled = !v2; $('fx-new').disabled = !v2;
   }
+  function renderCurrencies(){
+    const list = $('cur-list'); list.textContent = ''; $('cur-err').textContent = '';
+    CURRENCIES.forEach(([code, name]) => {
+      const b = el('button','crow btn'); b.type = 'button'; b.setAttribute('aria-pressed', code === CUR);
+      const nm = el('div','nm', name); nm.append(el('small', null, code + ' · ' + new Intl.NumberFormat('fr-FR', { style: 'currency', currency: code }).format(1250.5)));
+      b.append(nm); if (code === CUR) b.append(el('span','curok','✓'));
+      b.onclick = async () => {
+        if (code === CUR) return;
+        const { data, error } = await sb.auth.updateUser({ data: { devise: code } });
+        if (error) { $('cur-err').textContent = "Le changement n'a pas été enregistré. Vérifiez votre connexion."; return; }
+        if (data && data.user) user = data.user;
+        setCurrency(code); render(); renderCurrencies(); updateCounts(); toast('Monnaie : ' + name);
+      };
+      list.append(b);
+    });
+  }
   function updateCounts(){
+    $('n-cur').textContent = CUR;
     $('n-cards').textContent = (v2 ? cartes.length + 1 : '') + '';
     $('n-fixes').textContent = v2 && fixes.length ? fixes.length + ' · ' + eur.format(fixes.reduce((t,f)=>t+f.montant,0)) + '/mois' : '';
   }
@@ -1028,8 +1073,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 
   /* ---------- graphique comparatif ---------- */
   let stMode = store.get('carnet-st-mode') || 'meth', stRange = store.get('carnet-st-range') || 6;
-  const eur0 = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 });
-  const axisLbl = v => v >= 1000 ? (v / 1000).toLocaleString('fr-FR', { maximumFractionDigits: 1 }) + ' k€' : eur0.format(v) + ' €';
+  const axisLbl = v => v >= 1000 ? (v / 1000).toLocaleString('fr-FR', { maximumFractionDigits: 1 }) + ' k' + SYM : money0(v);
   const NS = 'http://www.w3.org/2000/svg';
   const svgEl = (tag, attrs, txt) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (txt != null) e.textContent = txt; return e; };
   const niceStep = raw => { const p = Math.pow(10, Math.floor(Math.log10(raw || 1))); const f = raw / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p; };
@@ -1082,8 +1126,8 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
       const prev = arr[i + 1];
       const r = el('div', 'tr');
       r.append(el('span', null, new Date(m.c.y, m.c.m, 1).toLocaleDateString('fr-FR', { month: 'long', year: '2-digit' }).replace(' ', ' ’')));
-      r.append(el('span', null, eur0.format(m.tot) + ' €'));
-      r.append(el('span', null, m.bud !== null ? eur0.format(m.bud) + ' €' : '—'));
+      r.append(el('span', null, money0(m.tot)));
+      r.append(el('span', null, m.bud !== null ? money0(m.bud) : '—'));
       let txt = '—', cls = '';
       if (prev && prev.tot > 0) { const pc = Math.round((m.tot - prev.tot) / prev.tot * 100); txt = (pc > 0 ? '+' : '') + pc + ' %'; cls = pc > 0 ? 'up' : pc < 0 ? 'down' : ''; }
       const e = el('span', cls, txt); e.title = 'Par rapport au mois précédent'; r.append(e);
@@ -1239,6 +1283,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     if (recovering) return;
     const changed = !user || user.id !== u.id;
     user = u;
+    setCurrency((u.user_metadata || {}).devise || 'EUR');
     $('auth').hidden = true; $('app').hidden = false;
     if (changed) {
       const c = store.get(cacheKey());
