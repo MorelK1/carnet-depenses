@@ -47,18 +47,19 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .wrap{max-width:640px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 
 /* Bandeau du haut */
-.appbar{position:sticky;top:0;z-index:5;background:var(--hero);color:var(--hero-ink);padding-top:var(--top)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--hero)}
+.appbar{position:sticky;top:0;z-index:5;background:var(--bg);color:var(--ink);padding-top:var(--top)}
 .appbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-block:4px 12px}
-.brand{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--hero-muted);display:flex;align-items:center;gap:6px}
-.sync{width:7px;height:7px;border-radius:50%;background:var(--hero-ring)}
+.brand{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);display:flex;align-items:center;gap:6px}
+.sync{width:7px;height:7px;border-radius:50%;background:var(--accent)}
 .sync.off{background:#f0b77a}
 .month{font-family:var(--f-display);font-weight:700;font-size:1.5rem;letter-spacing:-.01em;text-transform:capitalize;line-height:1.15}
 .navbtns{display:flex;gap:6px}
-.iconbtn{width:42px;height:42px;border-radius:50%;border:1px solid var(--hero-line);background:rgba(240,248,245,.08);color:var(--hero-ink);display:grid;place-items:center}
+.iconbtn{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center}
 .iconbtn:active{transform:scale(.95)}
 .iconbtn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.band{background:linear-gradient(180deg,var(--hero) 0%,var(--hero2) 100%);color:var(--hero-ink);border-radius:0 0 28px 28px}
-.band .wrap{display:grid;gap:16px;padding-block:6px 22px}
+.band{margin-top:4px}
+.band .card{background:linear-gradient(160deg,var(--hero) 0%,var(--hero2) 100%);color:var(--hero-ink);border-radius:24px;padding:20px;display:grid;gap:16px;box-shadow:0 10px 28px rgba(16,52,44,.22)}
 .hero-top{display:flex;align-items:center;justify-content:space-between;gap:14px}
 .hero-lbl{font-size:.85rem;color:var(--hero-muted)}
 .hero-big{font-family:var(--f-num);font-weight:700;font-size:clamp(2.1rem,10vw,2.8rem);line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-top:4px;overflow-wrap:anywhere}
@@ -79,7 +80,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .stat span{font-size:.76rem;color:var(--hero-muted)}
 .stat.bad b{color:var(--hero-bad)}
 
-main.wrap{display:grid;gap:18px;padding-block:20px calc(110px + env(safe-area-inset-bottom,0px))}
+main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-inset-bottom,0px))}
 .methods{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-inline:-4px;padding:2px 4px}
 .methods::-webkit-scrollbar{display:none}
 .methods:empty{display:none}
@@ -109,7 +110,8 @@ main.wrap{display:grid;gap:18px;padding-block:20px calc(110px + env(safe-area-in
 .rowtxt{flex:1;min-width:0}
 .rowtxt .lib{display:block;font-weight:700;overflow-wrap:anywhere}
 .meta{display:flex;flex-wrap:wrap;gap:4px 8px;margin-top:3px;font-size:.8rem;color:var(--muted);align-items:center}
-.tag{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:2px 7px;border-radius:999px;background:var(--warm-soft);color:var(--warm)}
+.tag{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:2px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.tag.imp{background:var(--warm-soft);color:var(--warm)}
 .amt{font-family:var(--f-num);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
 .row.done .lib,.row.done .amt{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
 .empty{background:var(--surface);border:1.5px dashed var(--line);border-radius:var(--r);padding:28px 20px;text-align:center;display:grid;gap:10px;justify-items:center;color:var(--muted)}
@@ -239,8 +241,8 @@ main.wrap{display:grid;gap:18px;padding-block:20px calc(110px + env(safe-area-in
   </div>
 </header>
 
-<section class="band" aria-label="Résumé du mois">
-  <div class="wrap">
+<section class="band wrap" aria-label="Résumé du mois">
+  <div class="card">
     <div class="hero-top">
       <div style="min-width:0">
         <div class="hero-lbl" id="h-lbl">Reste à payer</div>
@@ -528,7 +530,7 @@ main.wrap{display:grid;gap:18px;padding-block:20px calc(110px + env(safe-area-in
         const main = el('button','rowmain'); main.type='button'; main.setAttribute('aria-label','Modifier ' + d.libelle);
         const txt = el('span','rowtxt'); txt.append(el('span','lib', d.libelle));
         const meta = el('span','meta'); meta.append(el('span',null, d.moyen || 'Moyen non précisé'));
-        if (d.type==='imprevue') meta.append(el('span','tag','imprévue'));
+        meta.append(d.type==='imprevue' ? el('span','tag imp','imprévue') : el('span','tag','prévue'));
         txt.append(meta);
         main.append(txt, el('span','amt', eur.format(d.montant)));
         main.addEventListener('click', ()=> openExp(d));
