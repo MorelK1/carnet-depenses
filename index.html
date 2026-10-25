@@ -84,11 +84,15 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 .methods{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-inline:-4px;padding:2px 4px}
 .methods::-webkit-scrollbar{display:none}
 .methods:empty{display:none}
-.mchip{flex:none;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:9px 14px;display:grid;gap:1px;min-width:96px}
-.mchip span{font-size:.76rem;color:var(--muted);white-space:nowrap}
-.mchip b{font-family:var(--f-num);font-size:.98rem;font-variant-numeric:tabular-nums}
-.mchip.brand{border-color:transparent;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.12)}
-.mchip.brand span{color:rgba(255,255,255,.86);font-weight:700}
+.mchip{flex:none;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:6px 11px;display:grid;gap:0}
+.mchip span{font-size:.7rem;color:var(--muted);white-space:nowrap;line-height:1.3}
+.mchip b{font-family:var(--f-num);font-size:.86rem;font-variant-numeric:tabular-nums;line-height:1.3}
+.mchip.bank{border-color:transparent;color:#fff}
+.mchip.bank span{color:rgba(255,255,255,.88)}
+.newcat{display:flex;gap:8px;margin-top:8px}
+.newcat .inp{flex:1;min-width:0}
+.newcat .ghost{flex:none}
+.chip.add{border-style:dashed;color:var(--accent);font-weight:700}
 .mdot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:0;flex:none}
 .chart{background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:10px 8px 4px}
 .chart svg{width:100%;height:auto;display:block}
@@ -306,7 +310,9 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   <form id="form-exp" autocomplete="off" novalidate hidden>
     <div class="field"><label for="e-lib">Libellé</label><input class="inp" id="e-lib" maxlength="80" placeholder="Loyer, Navigo, courses…"></div>
     <div class="field"><label for="e-amt">Montant</label><div class="amtwrap"><input class="inp big" id="e-amt" inputmode="decimal" placeholder="0,00"></div></div>
-    <div class="field"><span class="flbl">Catégorie</span><div class="chips" id="e-cats"></div></div>
+    <div class="field"><span class="flbl">Catégorie</span><div class="chips" id="e-cats"></div>
+      <div class="newcat" id="e-newcat-w" hidden><input class="inp" id="e-newcat" maxlength="30" placeholder="Ex. Location, Cadeaux, Enfants…" aria-label="Nom de la nouvelle catégorie"><button type="button" class="ghost" id="e-newcat-ok">Ajouter</button></div>
+    </div>
     <div class="field"><label for="e-meth">Payé avec</label>
       <div class="selwrap"><select class="inp" id="e-meth"></select></div>
       <input class="inp" id="e-meth-other" maxlength="40" placeholder="Nom de la carte" aria-label="Autre moyen de paiement" hidden>
@@ -420,7 +426,9 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   const eur = new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR'});
   const CATS = ['Logement','Courses','Transport','Abonnements','Santé','Loisirs','Épargne','Autre'];
   const METHODS = ['Espèces','LCL','Revolut','Hello Bank','Bourso Bank'];
-  const catColor = c => 'var(--c' + ((CATS.indexOf(c) + 8) % 8 + 1) + ')';
+  const hashColor = (k, pal) => { let h = 0; for (const ch of String(k)) h = (h*31 + ch.charCodeAt(0)) >>> 0; return pal[h % pal.length]; };
+  const CAT_EXTRA = ['#7a4fb5','#c2562f','#2f7f8f','#a8456b','#4f7a2e','#a88317','#3b5fa8','#b0476b'];
+  const catColor = c => { const i = CATS.indexOf(c); return i >= 0 ? 'var(--c' + (i + 1) + ')' : hashColor(c, CAT_EXTRA); };
   // Couleurs des banques (approximations des couleurs de marque, modifiables ici)
   const BANK_COLORS = { 'especes':'#2e8b57', 'lcl':'#0a3d8f', 'revolut':'#5a6170', 'hellobank':'#0096d6', 'boursobank':'#d1006a', 'boursorama':'#d1006a', 'nonprecise':'#7f8f8a' };
   const EXTRA = ['#7a4fb5','#c2562f','#a88317','#2f7f8f','#a8456b','#4f7a2e'];
@@ -547,7 +555,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     const per = {};
     paidItems.forEach(d => { const m = d.moyen || 'Non précisé'; per[m] = (per[m]||0) + d.montant; });
     const mbox = $('methods'); mbox.textContent = '';
-    Object.entries(per).sort((a,b)=>b[1]-a[1]).forEach(([m,v]) => { const c = el('div','mchip brand'); c.style.background = methodColor(m); c.append(el('span',null,m), el('b',null,eur.format(v))); mbox.append(c); });
+    Object.entries(per).sort((a,b)=>b[1]-a[1]).forEach(([m,v]) => { const c = el('div','mchip bank'); c.style.background = methodColor(m); c.append(el('span',null,m), el('b',null,eur.format(v))); mbox.append(c); });
 
     $('n-all').textContent = items.length; $('n-todo').textContent = items.length - paidItems.length; $('n-done').textContent = paidItems.length;
     document.querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.f === filter));
@@ -613,15 +621,30 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   $('scrim').addEventListener('click', closeSheet);
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('sheet').hidden) closeSheet(); });
 
+  let extraCats = [];
+  const allCats = () => [...CATS, ...[...new Set([...all.map(d=>d.categorie), ...extraCats, eCat])].filter(c => c && !CATS.includes(c)).sort((a,b)=>a.localeCompare(b,'fr'))];
   function paintChips(){
     const cc = $('e-cats'); cc.textContent='';
-    CATS.forEach(c => { const b = el('button','chip'); b.type='button'; b.setAttribute('aria-pressed', c===eCat);
+    allCats().forEach(c => { const b = el('button','chip'); b.type='button'; b.setAttribute('aria-pressed', c===eCat);
       const dot = el('span','dot'); dot.style.background = catColor(c); b.append(dot, document.createTextNode(c));
       b.onclick = ()=>{ eCat = c; paintChips(); }; cc.append(b); });
+    const add = el('button','chip add','+ Nouvelle'); add.type='button'; add.setAttribute('aria-label','Créer une nouvelle catégorie');
+    add.onclick = ()=>{ $('e-newcat-w').hidden = false; $('e-newcat').value = ''; $('e-newcat').focus(); };
+    cc.append(add);
     document.querySelectorAll('#e-type .chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.t===eType));
     $('e-paid').setAttribute('aria-checked', ePaid);
   }
   document.querySelectorAll('#e-type .chip').forEach(b => b.onclick = ()=>{ eType = b.dataset.t; paintChips(); });
+  function addCat(){
+    let v = $('e-newcat').value.trim().replace(/\s+/g,' ');
+    if (!v) { $('e-newcat').focus(); return; }
+    v = v.charAt(0).toUpperCase() + v.slice(1);
+    const same = allCats().find(c => c.toLowerCase() === v.toLowerCase());
+    eCat = same || v; if (!same) extraCats.push(v);
+    $('e-newcat-w').hidden = true; paintChips();
+  }
+  $('e-newcat-ok').onclick = addCat;
+  $('e-newcat').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addCat(); } if (e.key === 'Escape') { e.stopPropagation(); $('e-newcat-w').hidden = true; } });
   $('e-paid').onclick = ()=>{ ePaid = !ePaid; paintChips(); };
   function fillMethods(value){
     const s = $('e-meth'); s.textContent = '';
@@ -642,7 +665,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     eCat = d ? d.categorie : 'Courses'; eType = d ? d.type : 'prevue'; ePaid = d ? d.payee : false;
     $('e-save').textContent = d ? 'Enregistrer' : 'Ajouter';
     $('e-del').hidden = !d; $('e-del').textContent = 'Supprimer';
-    $('e-err').textContent = '';
+    $('e-err').textContent = ''; $('e-newcat-w').hidden = true;
     paintChips(); openSheet('exp', d ? 'Modifier la dépense' : 'Nouvelle dépense');
     if (!d) setTimeout(()=>$('e-lib').focus(), 260);
   }
