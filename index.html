@@ -325,6 +325,20 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 .page .acct{background:var(--surface)}
 .page .menu{background:var(--surface)}
 .pagenote{font-size:.88rem;color:var(--muted);margin:-6px 4px 0}
+.recsum{display:grid;grid-template-columns:1fr 1fr;gap:10px 8px;background:linear-gradient(160deg,var(--hero),var(--hero2));color:var(--hero-ink);border-radius:18px;padding:14px 16px}
+.recsum div{min-width:0}
+.recsum span{display:block;font-size:.74rem;color:var(--hero-muted)}
+.recsum b{display:block;font-family:var(--f-num);font-weight:700;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recsum[hidden]{display:none}
+.recsum .nextl{grid-column:1/-1;border-top:1px solid var(--hero-line);padding-top:10px;font-size:.88rem;color:var(--hero-muted)}
+.recsum .nextl b{display:inline;font-family:var(--f-body);font-size:.88rem;color:var(--hero-ink);white-space:normal}
+.amtcol{display:grid;justify-items:end;flex:none}
+.amtcol small{font-size:.72rem;color:var(--muted);font-family:var(--f-num)}
+.tag.soon{display:inline-block;margin-top:4px;background:var(--warm-soft);color:var(--warm)}
+.tag.ab{background:#efe6f8;color:#6b3f99}
+@media (prefers-color-scheme: dark){.tag.ab{background:#33264a;color:#d4b8f2}}
+.hint{font-size:.8rem;color:var(--muted)}
+.hint:empty{display:none}
 </style>
 </head>
 <body>
@@ -414,10 +428,19 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 
   <!-- RÉCURRENTS -->
   <section class="page" id="p-recurrents" aria-label="Récurrents" hidden>
-    <p class="pagenote">Elles sont ajoutées automatiquement à chaque mois, non cochées. Vous n'avez plus qu'à les cocher une fois payées.</p>
-    <div class="menu" id="fixes-list"></div>
-    <div class="totfix" id="fixes-tot"></div>
-    <div class="actions"><button type="button" class="primary" id="fx-new">+ Ajouter une dépense fixe</button></div>
+    <div class="seg" id="rec-seg" role="group" aria-label="Type de récurrence">
+      <button type="button" data-g="abonnement" aria-pressed="true">Abonnements<em id="n-ab">0</em></button>
+      <button type="button" data-g="fixe" aria-pressed="false">Fixes<em id="n-fx">0</em></button>
+      <button type="button" data-g="revenu" aria-pressed="false">Revenus<em id="n-rv">0</em></button>
+    </div>
+    <div class="recsum" id="rec-sum"></div>
+    <p class="pagenote" id="rec-note"></p>
+    <div class="menu" id="rec-list"></div>
+    <div id="rec-old-w" hidden>
+      <div class="sect-h" style="margin:0 4px 10px"><h2 id="rec-old-t">Résiliés</h2></div>
+      <div class="menu" id="rec-old"></div>
+    </div>
+    <div class="actions"><button type="button" class="primary" id="rec-new">+ Ajouter un abonnement</button></div>
   </section>
 
   <!-- COMPTE -->
@@ -519,24 +542,37 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     </div>
   </form>
 
-  <!-- Dépense fixe -->
-  <form class="view" id="v-fixe" novalidate hidden>
-    <div class="field" id="ff-lib"><label for="f-lib">Libellé</label><input class="inp" id="f-lib" maxlength="80" placeholder="Ex. Loyer, Électricité…"></div>
-    <div class="field" id="ff-amt"><label for="f-amt">Montant mensuel</label><div class="amtwrap" data-sym="€"><input class="inp big" id="f-amt" inputmode="decimal" placeholder="0,00"></div></div>
-    <div class="field" id="ff-cat"><label for="f-cat">Catégorie</label><div class="selwrap"><select class="inp" id="f-cat"></select></div>
-      <div class="newcat" id="f-newcat-w" hidden><input class="inp" id="f-newcat" maxlength="30" placeholder="Nom de la catégorie" aria-label="Nom de la nouvelle catégorie"><button type="button" class="ghost" id="f-newcat-ok">Ajouter</button></div>
+  <!-- Dépense récurrente (abonnement, dépense fixe, revenu) -->
+  <form class="view" id="v-rec" novalidate hidden>
+    <div class="field" id="rf-lib"><label for="r-lib">Libellé</label><input class="inp" id="r-lib" maxlength="80"></div>
+    <div class="field" id="rf-amt"><label for="r-amt">Montant</label><div class="amtwrap" data-sym="€"><input class="inp big" id="r-amt" inputmode="decimal" placeholder="0,00"></div></div>
+    <div class="field" id="rf-per"><label for="r-per">Périodicité</label><div class="selwrap"><select class="inp" id="r-per">
+      <option value="semaine">Chaque semaine</option>
+      <option value="4semaines">Toutes les 4 semaines</option>
+      <option value="mois">Chaque mois</option>
+      <option value="trimestre">Chaque trimestre</option>
+      <option value="an">Chaque année</option>
+    </select></div></div>
+    <div class="field" id="rf-start"><label for="r-start" id="r-start-l">Date du premier prélèvement</label><input class="inp datein" id="r-start" type="date"><small class="hint" id="r-start-h"></small></div>
+    <div class="field" id="rf-debut"><label for="r-debut">À partir de</label><div class="selwrap"><select class="inp" id="r-debut"></select></div></div>
+    <div class="field" id="rf-jour"><label for="r-jour">Jour du prélèvement (facultatif)</label><div class="selwrap"><select class="inp" id="r-jour"></select></div></div>
+    <div class="field" id="rf-cat"><label for="r-cat">Catégorie</label><div class="selwrap"><select class="inp" id="r-cat"></select></div>
+      <div class="newcat" id="r-newcat-w" hidden><input class="inp" id="r-newcat" maxlength="30" placeholder="Nom de la catégorie" aria-label="Nom de la nouvelle catégorie"><button type="button" class="ghost" id="r-newcat-ok">Ajouter</button></div>
     </div>
-    <div class="field" id="ff-meth"><label for="f-meth">Payé avec</label><div class="selwrap"><select class="inp" id="f-meth"></select></div>
-      <div class="newcat" id="f-newcard-w" hidden><input class="inp" id="f-newcard" maxlength="40" placeholder="Nom de la carte" aria-label="Nom de la nouvelle carte"><button type="button" class="ghost" id="f-newcard-ok">Ajouter</button></div>
+    <div class="field" id="rf-meth"><label for="r-meth">Payé avec</label><div class="selwrap"><select class="inp" id="r-meth"></select></div>
+      <div class="newcat" id="r-newcard-w" hidden><input class="inp" id="r-newcard" maxlength="40" placeholder="Nom de la carte" aria-label="Nom de la nouvelle carte"><button type="button" class="ghost" id="r-newcard-ok">Ajouter</button></div>
     </div>
-    <div class="field"><label for="f-debut">À partir de</label><div class="selwrap"><select class="inp" id="f-debut"></select></div></div>
-    <div class="field"><label for="f-jour">Jour du prélèvement (facultatif)</label><div class="selwrap"><select class="inp" id="f-jour"></select></div></div>
-    <p class="note" id="f-note"></p>
-    <div class="err" id="f-err" role="alert"></div>
+    <div class="field" id="rf-src"><label for="r-src">Source</label><div class="selwrap"><select class="inp" id="r-src"></select></div>
+      <div class="newcat" id="r-newsrc-w" hidden><input class="inp" id="r-newsrc" maxlength="40" placeholder="Ex. Bourse, Freelance, Allocations…" aria-label="Nom de la nouvelle source"><button type="button" class="ghost" id="r-newsrc-ok">Ajouter</button></div>
+    </div>
+    <div class="field" id="rf-fin"><label for="r-fin" id="r-fin-l">Date de fin (facultatif)</label><input class="inp datein" id="r-fin" type="date"></div>
+    <p class="note" id="r-note"></p>
+    <div class="err" id="r-err" role="alert"></div>
     <div class="actions">
-      <button type="button" class="danger" id="f-del" hidden>Supprimer</button>
-      <button type="submit" class="primary" id="f-save">Enregistrer</button>
+      <button type="button" class="danger" id="r-del" hidden>Supprimer</button>
+      <button type="submit" class="primary" id="r-save">Enregistrer</button>
     </div>
+    <button type="button" class="ghost" id="r-stop" hidden style="width:100%;margin-top:10px">Résilier à partir d'aujourd'hui</button>
   </form>
 
   <!-- Mes cartes -->
@@ -596,7 +632,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 
   <!-- Supprimer le compte -->
   <div class="view" id="v-del" hidden>
-    <p class="note">Votre compte et <b>toutes vos dépenses, budgets, cartes et dépenses fixes</b> seront effacés définitivement. Pensez à exporter vos données avant.</p>
+    <p class="note">Votre compte et <b>toutes vos dépenses, budgets, cartes et dépenses fixes</b> seront effacés définitivement, ainsi que vos abonnements et revenus récurrents. Pensez à exporter vos données avant.</p>
     <div class="field"><label for="d-confirm">Tapez SUPPRIMER pour confirmer</label><input class="inp" id="d-confirm" autocapitalize="characters" autocomplete="off"></div>
     <div class="err" id="d-err" role="alert"></div>
     <div class="actions"><button type="button" class="danger" id="d-go" style="flex:1">Supprimer définitivement</button></div>
@@ -694,7 +730,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   const appUrl = location.origin + location.pathname;
 
   /* ---------- état ---------- */
-  let user = null, all = [], budgets = {}, cartes = [], fixes = [], cats = [], loaded = false, v3 = true;
+  let user = null, all = [], budgets = {}, cartes = [], fixes = [], cats = [], srcs = [], loaded = false, v3 = true;
   const applied = new Set();
   let filter = store.get('carnet-filtre') || 'all', verifOnly = false;
   let tab = 'mois';
@@ -716,17 +752,18 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     montant: Number(r.montant) || 0, type: r.type === 'imprevue' ? 'imprevue' : 'prevue', moyen: r.moyen || '', payee: !!r.payee, cree: r.cree, fixe_id: r.fixe_id || null });
   const byDate = (a, b) => (a.date || '9999') < (b.date || '9999') ? -1 : (a.date || '9999') > (b.date || '9999') ? 1 : 0;
   const cacheKey = () => 'carnet-cache-' + (user ? user.id : '');
-  const saveCache = () => store.set(cacheKey(), { all, budgets, cartes, fixes, cats });
+  const saveCache = () => store.set(cacheKey(), { all, budgets, cartes, fixes, cats, srcs });
   const setSync = ok => { $('sync').classList.toggle('off', !ok); $('sync').title = ok ? 'Synchronisé' : 'Hors ligne : données du dernier chargement'; };
   const fail = (msg, error) => { console.error(error); setSync(navigator.onLine); toast(navigator.onLine ? msg : 'Hors ligne : modification non enregistrée. Réessayez une fois connectée.'); };
 
   async function load(){
-    const [d, b, c, f, k] = await Promise.all([
+    const [d, b, c, f, k, so] = await Promise.all([
       sb.from('depenses').select('*').order('date', { ascending: true, nullsFirst: true }),
       sb.from('budgets').select('mois,montant'),
       sb.from('cartes').select('*').order('cree', { ascending: true }),
       sb.from('fixes').select('*').order('cree', { ascending: true }),
-      sb.from('categories').select('*').order('ordre', { ascending: true })
+      sb.from('categories').select('*').order('ordre', { ascending: true }),
+      sb.from('sources').select('nom').order('cree', { ascending: true })
     ]);
     if (d.error || b.error) { setSync(false); if (!loaded) toast('Impossible de charger vos données. Vérifiez votre connexion.'); return; }
     v3 = !k.error && !c.error && !f.error;
@@ -734,8 +771,10 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     all = d.data.map(norm);
     budgets = {}; b.data.forEach(r => budgets[r.mois] = Number(r.montant));
     if (!c.error) cartes = c.data.map(x => ({ id: x.id, nom: x.nom, couleur: x.couleur || '' }));
-    if (!f.error) fixes = f.data.map(x => ({ id: x.id, genre: x.genre || 'fixe', libelle: x.libelle, montant: Number(x.montant) || 0, categorie: x.categorie, moyen: x.moyen,
-      debut: x.debut || (x.date_debut || '').slice(0, 7), jour: x.jour || null }));
+    if (!f.error) fixes = f.data.map(x => ({ id: x.id, genre: x.genre || 'fixe', libelle: x.libelle, montant: Number(x.montant) || 0, categorie: x.categorie || null, moyen: x.moyen || null,
+      periode: x.periode || 'mois', date_debut: x.date_debut || (x.debut ? x.debut + '-01' : null), debut: x.debut || (x.date_debut || '').slice(0, 7),
+      jour: x.jour || null, fin: x.fin || null, source: x.source || '' }));
+    if (!so.error) srcs = so.data.map(x => x.nom);
     if (v3) {
       cats = k.data.map(x => ({ id: x.id, nom: x.nom, couleur: x.couleur || '', groupe_id: x.groupe_id || null }));
       if (!cats.length && !load.initDone) { load.initDone = true; const r = await sb.rpc('initialiser_compte'); if (!r.error) return load(); }
@@ -768,11 +807,11 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   function render(){
     const k = key(cur);
     const isMonth = tab === 'mois' || tab === 'depenses';
-    $('ptitle').textContent = isMonth ? monthName(cur) : tab === 'recurrents' ? 'Dépenses fixes' : 'Mon compte';
+    $('ptitle').textContent = isMonth ? monthName(cur) : tab === 'recurrents' ? 'Récurrents' : 'Mon compte';
     $('ptitle').classList.toggle('cap', isMonth);
     if (tab === 'mois') renderMois(k);
     if (tab === 'depenses') renderDepenses(k);
-    if (tab === 'recurrents') renderFixes();
+    if (tab === 'recurrents') renderRec();
     if (tab === 'compte') renderCompte();
   }
 
@@ -883,7 +922,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
         meta.append(el('span', null, d.date ? fmtDay(d.date) : 'Sans date'));
         const mm = el('span'); const md = el('i','mdot'); md.style.background = methodColor(d.moyen); mm.append(md, document.createTextNode(d.moyen || 'Moyen non précisé')); meta.append(mm);
         meta.append(d.type==='imprevue' ? el('span','tag imp','imprévue') : el('span','tag','prévue'));
-        if (d.fixe_id) meta.append(el('span','tag fx','fixe'));
+        if (d.fixe_id) { const g = (fixes.find(f => f.id === d.fixe_id) || {}).genre; meta.append(g === 'abonnement' ? el('span','tag ab','abonnement') : el('span','tag fx','fixe')); }
         if (d.verif) meta.append(el('span','tag verif','date à vérifier'));
         txt.append(meta);
         main.append(txt, el('span','amt', eur.format(d.montant)));
@@ -907,7 +946,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   }
 
   /* ---------- panneau ---------- */
-  const VIEWS = ['v-exp','v-pay','v-bud','v-fixe','v-cards','v-cur','v-pass','v-mail','v-stats','v-del'];
+  const VIEWS = ['v-exp','v-pay','v-bud','v-rec','v-cards','v-cur','v-pass','v-mail','v-stats','v-del'];
   let editing = null, dirtyCheck = null;
   function openSheet(view, title, isDirty){
     VIEWS.forEach(v => $(v).hidden = v !== view);
@@ -1143,111 +1182,261 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     toast(add.length + (add.length>1 ? ' prévisions reprises' : ' prévision reprise') + ', au même jour du mois');
   };
 
-  /* ---------- dépenses fixes (onglet Récurrents) ---------- */
-  let fEditing = null, fDelArmed = false, fSnap = '';
-  const FF = ['ff-lib','ff-amt','ff-cat','ff-meth'];
+  /* ---------- Récurrents : abonnements, dépenses fixes, revenus ---------- */
+  const PER = {
+    semaine:     { lbl: 'Chaque semaine',        court: 'chaque semaine',        mois: 52 / 12 },
+    '4semaines': { lbl: 'Toutes les 4 semaines', court: 'toutes les 4 semaines', mois: 13 / 12 },
+    mois:        { lbl: 'Chaque mois',           court: 'chaque mois',           mois: 1 },
+    trimestre:   { lbl: 'Chaque trimestre',      court: 'chaque trimestre',      mois: 1 / 3 },
+    an:          { lbl: 'Chaque année',          court: 'chaque année',          mois: 1 / 12 }
+  };
+  const GENRES = {
+    abonnement: { un: 'abonnement', nouveau: 'Nouvel abonnement', modifier: "Modifier l'abonnement", ajouter: '+ Ajouter un abonnement', vide: 'Aucun abonnement pour l’instant.',
+                  note: 'Chaque échéance est ajoutée à vos dépenses, à sa date exacte. Un abonnement toutes les 4 semaines peut donc apparaître deux fois dans un mois.' },
+    fixe:       { un: 'dépense fixe', nouveau: 'Nouvelle dépense fixe', modifier: 'Modifier la dépense fixe', ajouter: '+ Ajouter une dépense fixe', vide: 'Aucune dépense fixe pour l’instant.',
+                  note: 'Elles sont ajoutées automatiquement à chaque mois, non cochées. Vous n’avez plus qu’à les cocher une fois payées.' },
+    revenu:     { un: 'revenu', nouveau: 'Nouveau revenu récurrent', modifier: 'Modifier le revenu', ajouter: '+ Ajouter un revenu récurrent', vide: 'Aucun revenu récurrent pour l’instant.',
+                  note: 'Salaire, bourse, allocations… Chaque versement est ajouté à vos entrées d’argent du mois, à sa date.' }
+  };
+  let recGenre = store.get('carnet-rec-genre') || 'abonnement';
+  const pad2 = n => String(n).padStart(2, '0');
   const monthLbl = k => { const [y, m] = k.split('-').map(Number); return new Date(y, m - 1, 1).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' }); };
-  const fixesOnly = () => fixes.filter(f => f.genre === 'fixe');
-  function renderFixes(){
-    const list = $('fixes-list'); list.textContent = '';
-    const fx = fixesOnly();
-    if (!fx.length) { const r = el('div','crow'); r.append(el('div','nm', 'Aucune dépense fixe pour l’instant.')); list.append(r); }
-    fx.forEach(f => {
-      const b = el('button','crow btn'); b.type = 'button';
-      const dot = el('span','mdot'); dot.style.background = catColor(f.categorie);
-      const nm = el('div','nm', f.libelle);
-      nm.append(el('small', null, f.categorie + ' · ' + f.moyen + ' · ' + (f.jour ? 'le ' + f.jour + ' du mois' : 'sans jour fixe') + ' · depuis ' + monthLbl(f.debut)));
-      b.append(dot, nm, el('span','amt', eur.format(f.montant)));
-      b.onclick = () => openFixe(f); list.append(b);
-    });
-    const t = $('fixes-tot'); t.textContent = '';
-    if (fx.length) t.append(el('span', null, 'Total des dépenses fixes'), el('b', null, eur.format(fx.reduce((a, f) => a + f.montant, 0)) + ' / mois'));
-    $('fx-new').disabled = !v3;
+  const isOver = f => !!f.fin && f.fin <= todayIso();
+  const perMonth = f => f.montant * (PER[f.periode] || PER.mois).mois;
+
+  // Première échéance à partir de « from » (ou null : terminée, ou sans jour précis)
+  function occAfter(f, from){
+    const s = f.date_debut; if (!s) return null;
+    let d = null;
+    if (f.periode === 'semaine' || f.periode === '4semaines') {
+      const pas = f.periode === 'semaine' ? 7 : 28;
+      if (s >= from) d = s;
+      else { const diff = Math.round((dObj(from) - dObj(s)) / 864e5); d = addDays(s, Math.ceil(diff / pas) * pas); }
+    } else {
+      const stepM = f.periode === 'trimestre' ? 3 : f.periode === 'an' ? 12 : 1;
+      const day = f.periode === 'mois' ? f.jour : Number(s.slice(8));
+      if (!day) return null;
+      let [y, m] = s.split('-').map(Number);
+      for (let i = 0; i < 600 && !d; i++) {
+        const c = y + '-' + pad2(m) + '-' + pad2(Math.min(day, new Date(y, m, 0).getDate()));
+        if (c >= from && c >= s) d = c;
+        m += stepM; while (m > 12) { m -= 12; y++; }
+      }
+    }
+    if (d && f.fin && d > f.fin) return null;
+    return d;
   }
+  const inDays = d => Math.round((dObj(d) - dObj(todayIso())) / 864e5);
+  const whenTxt = d => { const n = inDays(d); return n === 0 ? "aujourd'hui" : n === 1 ? 'demain' : n < 7 ? 'dans ' + n + ' jours' : 'le ' + fmtDay(d); };
+
+  function renderRec(){
+    const counts = { abonnement: 0, fixe: 0, revenu: 0 };
+    fixes.forEach(f => { if (!isOver(f) && counts[f.genre] != null) counts[f.genre]++; });
+    $('n-ab').textContent = counts.abonnement; $('n-fx').textContent = counts.fixe; $('n-rv').textContent = counts.revenu;
+    document.querySelectorAll('#rec-seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.g === recGenre));
+    const G = GENRES[recGenre];
+    $('rec-note').textContent = G.note; $('rec-new').textContent = G.ajouter; $('rec-new').disabled = !v3;
+    const mine = fixes.filter(f => f.genre === recGenre);
+    const active = mine.filter(f => !isOver(f)), old = mine.filter(isOver);
+    const today = todayIso();
+    active.forEach(f => f._next = occAfter(f, today));
+    active.sort((a, b) => (a._next || '9999') < (b._next || '9999') ? -1 : (a._next || '9999') > (b._next || '9999') ? 1 : a.libelle.localeCompare(b.libelle, 'fr'));
+
+    // résumé
+    const sum = $('rec-sum'); sum.textContent = '';
+    if (active.length) {
+      const m = active.reduce((t, f) => t + perMonth(f), 0);
+      const box = (lbl, val) => { const d = el('div'); d.append(el('span', null, lbl), el('b', null, val)); return d; };
+      sum.append(box(recGenre === 'revenu' ? 'Revenus par mois' : 'Coût par mois', (active.some(f => f.periode !== 'mois') ? '≈ ' : '') + eur.format(m)),
+                 box('Par an', '≈ ' + eur.format(m * 12)));
+      const next = active.find(f => f._next);
+      if (next) { const l = el('div', 'nextl'); l.append(document.createTextNode((recGenre === 'revenu' ? 'Prochain versement : ' : 'Prochain prélèvement : ')), el('b', null, next.libelle + ', ' + whenTxt(next._next) + ' (' + eur.format(next.montant) + ')')); sum.append(l); }
+    }
+    sum.hidden = !active.length;
+
+    const row = (f, list) => {
+      const b = el('button', 'crow btn'); b.type = 'button';
+      const dot = el('span', 'mdot'); dot.style.background = f.genre === 'revenu' ? '#2e8b57' : catColor(f.categorie);
+      const nm = el('div', 'nm', f.libelle);
+      const per = f.genre === 'fixe' ? (f.jour ? 'le ' + f.jour + ' de chaque mois' : 'chaque mois, sans jour précis') : (PER[f.periode] || PER.mois).court;
+      const who = f.genre === 'revenu' ? f.source : f.moyen;
+      let line = per + ' · ' + who;
+      if (isOver(f)) line = (f.genre === 'abonnement' ? 'Résilié le ' : 'Terminé le ') + fmtDay(f.fin) + ' · ' + who;
+      else if (f.date_debut > today) line += ' · commence le ' + fmtDay(f.date_debut);
+      else if (f._next) line += ' · ' + (f.genre === 'revenu' ? 'prochain versement ' : 'prochain ') + whenTxt(f._next);
+      if (!isOver(f) && f.fin) line += ' · jusqu’au ' + fmtDay(f.fin);
+      const sm = el('small', null, line); nm.append(sm);
+      if (f._next && inDays(f._next) <= 3 && !isOver(f)) { const t = el('span', 'tag soon', inDays(f._next) === 0 ? "aujourd'hui" : 'bientôt'); nm.append(t); }
+      const right = el('span', 'amtcol'); right.append(el('span', 'amt', eur.format(f.montant)));
+      if (f.periode !== 'mois' && f.genre !== 'fixe') right.append(el('small', null, '≈ ' + eur.format(perMonth(f)) + '/mois'));
+      b.append(dot, nm, right); b.onclick = () => openRec(f); list.append(b);
+    };
+    const list = $('rec-list'); list.textContent = '';
+    if (!active.length) { const r = el('div', 'crow'); const t = el('div', 'nm', G.vide); t.style.fontWeight = '400'; t.style.color = 'var(--muted)'; r.append(t); list.append(r); }
+    active.forEach(f => row(f, list));
+    $('rec-old-w').hidden = !old.length;
+    $('rec-old-t').textContent = recGenre === 'abonnement' ? 'Résiliés' : 'Terminés';
+    const ol = $('rec-old'); ol.textContent = ''; old.forEach(f => row(f, ol));
+  }
+  document.querySelectorAll('#rec-seg button').forEach(b => b.onclick = () => { recGenre = b.dataset.g; store.set('carnet-rec-genre', recGenre); renderRec(); });
+
+  /* formulaire */
+  let rEditing = null, rGenre = 'abonnement', rDelArmed = false, rSnap = '';
+  const RF = ['rf-lib','rf-amt','rf-start','rf-cat','rf-meth','rf-src','rf-fin'];
   function fillCatSelect(sel, value){
     sel.textContent = '';
     [['', 'Choisir une catégorie…'], ...allCats().map(c => [c, c]), ['__new', '+ Nouvelle catégorie…']]
       .forEach(([v, t]) => { const o = document.createElement('option'); o.value = v; o.textContent = t; sel.append(o); });
     sel.value = value || '';
   }
-  $('f-cat').addEventListener('change', () => {
-    if ($('f-cat').value === '__new') { $('f-cat').value = ''; $('f-newcat-w').hidden = false; $('f-newcat').value = ''; $('f-newcat').focus(); }
-    else if ($('f-cat').value) clearMissing('ff-cat');
+  function fillSrcSelect(value){
+    const sel = $('r-src'); sel.textContent = '';
+    const names = [...new Set([...srcs, value].filter(Boolean))];
+    [['', 'Choisir une source…'], ...names.map(n => [n, n]), ['__new', '+ Ajouter une source…']]
+      .forEach(([v, t]) => { const o = document.createElement('option'); o.value = v; o.textContent = t; sel.append(o); });
+    sel.value = value || '';
+  }
+  $('r-cat').addEventListener('change', () => {
+    if ($('r-cat').value === '__new') { $('r-cat').value = ''; $('r-newcat-w').hidden = false; $('r-newcat').value = ''; $('r-newcat').focus(); }
+    else if ($('r-cat').value) clearMissing('rf-cat');
   });
-  const addFixCat = async () => { const n = await createCat($('f-newcat').value); if (!n) { $('f-newcat').focus(); return; } fillCatSelect($('f-cat'), n); $('f-newcat-w').hidden = true; clearMissing('ff-cat'); };
-  $('f-newcat-ok').onclick = addFixCat;
-  $('f-newcat').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addFixCat(); } if (e.key === 'Escape') { e.stopPropagation(); $('f-newcat-w').hidden = true; } });
-  wireNewCard('f-meth','f-newcard-w','f-newcard','f-newcard-ok','ff-meth');
-  $('f-lib').addEventListener('input', () => clearMissing('ff-lib'));
-  $('f-amt').addEventListener('input', () => clearMissing('ff-amt'));
-  const fState = () => JSON.stringify([$('f-lib').value, $('f-amt').value, $('f-cat').value, $('f-meth').value, $('f-debut').value, $('f-jour').value]);
+  const addRecCat = async () => { const n = await createCat($('r-newcat').value); if (!n) { $('r-newcat').focus(); return; } fillCatSelect($('r-cat'), n); $('r-newcat-w').hidden = true; clearMissing('rf-cat'); };
+  $('r-newcat-ok').onclick = addRecCat;
+  $('r-newcat').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addRecCat(); } if (e.key === 'Escape') { e.stopPropagation(); $('r-newcat-w').hidden = true; } });
+  wireNewCard('r-meth','r-newcard-w','r-newcard','r-newcard-ok','rf-meth');
+  $('r-src').addEventListener('change', () => {
+    if ($('r-src').value === '__new') { $('r-src').value = ''; $('r-newsrc-w').hidden = false; $('r-newsrc').value = ''; $('r-newsrc').focus(); }
+    else if ($('r-src').value) clearMissing('rf-src');
+  });
+  async function addSrc(){
+    const n = capFirst($('r-newsrc').value || '');
+    if (!n) { $('r-newsrc').focus(); return; }
+    const same = srcs.find(s => s.toLowerCase() === n.toLowerCase());
+    if (!same) {
+      const { error } = await sb.from('sources').insert({ user_id: user.id, nom: n });
+      if (error) return fail("La source n'a pas été enregistrée.", error);
+      srcs.push(n); saveCache();
+    }
+    fillSrcSelect(same || n); $('r-newsrc-w').hidden = true; clearMissing('rf-src');
+  }
+  $('r-newsrc-ok').onclick = addSrc;
+  $('r-newsrc').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addSrc(); } if (e.key === 'Escape') { e.stopPropagation(); $('r-newsrc-w').hidden = true; } });
+  ['r-lib','r-amt'].forEach(i => $(i).addEventListener('input', () => clearMissing(i.replace('r-', 'rf-'))));
+  ['input','change'].forEach(ev => { $('r-start').addEventListener(ev, () => { clearMissing('rf-start'); startHint(); }); $('r-fin').addEventListener(ev, () => clearMissing('rf-fin')); });
+  $('r-per').addEventListener('change', startHint);
+  function startHint(){
+    const s = $('r-start').value, h = $('r-start-h');
+    if (rGenre === 'fixe' || !s) { h.textContent = rGenre === 'abonnement' ? 'Pendant un essai gratuit, indiquez la date du premier prélèvement payant.' : ''; return; }
+    const f = { periode: $('r-per').value, date_debut: s, jour: Number(s.slice(8)), fin: $('r-fin').value || null };
+    const a = occAfter(f, todayIso()); const b2 = a ? occAfter(f, addDays(a, 1)) : null;
+    h.textContent = a ? 'Prochaines échéances : ' + fmtDay(a) + (b2 ? ', ' + fmtDay(b2) : '') + '…' : 'Plus aucune échéance à venir.';
+  }
+  const rState = () => JSON.stringify(['r-lib','r-amt','r-per','r-start','r-debut','r-jour','r-cat','r-meth','r-src','r-fin'].map(i => $(i).value));
 
-  function openFixe(f){
-    fEditing = f || null; fDelArmed = false;
-    $('f-lib').value = f ? f.libelle : '';
-    $('f-amt').value = f ? String(f.montant).replace('.', ',') : '';
-    fillCatSelect($('f-cat'), f ? f.categorie : ''); $('f-newcat-w').hidden = true;
-    fillMethodSelect($('f-meth'), f ? f.moyen : ''); $('f-newcard-w').hidden = true;
-    const ds = $('f-debut'); ds.textContent = '';
-    const start = f && f.debut < nowKey() ? f.debut : nowKey();
+  function openRec(f, genre){
+    rEditing = f || null; rGenre = f ? f.genre : (genre || recGenre); rDelArmed = false;
+    const G = GENRES[rGenre], show = (id, on) => $(id).hidden = !on;
+    show('rf-per', rGenre !== 'fixe'); show('rf-start', rGenre !== 'fixe');
+    show('rf-debut', rGenre === 'fixe'); show('rf-jour', rGenre === 'fixe');
+    show('rf-cat', rGenre !== 'revenu'); show('rf-meth', rGenre !== 'revenu'); show('rf-src', rGenre === 'revenu');
+    $('r-lib').placeholder = { abonnement: 'Ex. Netflix, Spotify, salle de sport…', fixe: 'Ex. Loyer, Électricité…', revenu: 'Ex. Salaire, Bourse…' }[rGenre];
+    $('r-start-l').textContent = rGenre === 'revenu' ? 'Date du premier versement' : 'Date du premier prélèvement';
+    $('r-lib').value = f ? f.libelle : '';
+    $('r-amt').value = f ? String(f.montant).replace('.', ',') : '';
+    $('r-per').value = f ? f.periode : 'mois';
+    $('r-start').value = f ? f.date_debut : '';
+    $('r-fin').value = f && f.fin ? f.fin : '';
+    fillCatSelect($('r-cat'), f ? f.categorie : (rGenre === 'abonnement' && allCats().includes('Abonnements') ? 'Abonnements' : '')); $('r-newcat-w').hidden = true;
+    fillMethodSelect($('r-meth'), f ? f.moyen : ''); $('r-newcard-w').hidden = true;
+    fillSrcSelect(f ? f.source : (rGenre === 'revenu' && srcs.includes('Salaire') ? 'Salaire' : '')); $('r-newsrc-w').hidden = true;
+    // fixe : mois de départ + jour
+    const ds = $('r-debut'); ds.textContent = '';
+    const debut = f ? f.debut : nowKey();
+    const start = debut < nowKey() ? debut : nowKey();
     let [y, m] = start.split('-').map(Number); const ks = [];
-    while (ks.length < 14) { const k = y + '-' + String(m).padStart(2, '0'); ks.push(k); if (k >= nowKey() && ks.length >= 12 && (!f || k >= f.debut)) break; m++; if (m > 12) { m = 1; y++; } }
+    while (ks.length < 14) { const k = y + '-' + pad2(m); ks.push(k); if (k >= nowKey() && ks.length >= 12 && k >= debut) break; m++; if (m > 12) { m = 1; y++; } }
     ks.forEach(k => { const o = document.createElement('option'); o.value = k; o.textContent = monthName(monthOfKey(k)); ds.append(o); });
-    ds.value = f ? f.debut : nowKey();
-    const js = $('f-jour'); js.textContent = '';
+    ds.value = debut;
+    const js = $('r-jour'); js.textContent = '';
     const o0 = document.createElement('option'); o0.value = ''; o0.textContent = 'Sans jour précis'; js.append(o0);
     for (let i = 1; i <= 31; i++) { const o = document.createElement('option'); o.value = String(i); o.textContent = 'Le ' + i + (i === 1 ? 'er' : '') + ' du mois' + (i >= 29 ? ' (ou le dernier jour)' : ''); js.append(o); }
-    js.value = f && f.jour ? String(f.jour) : '';
-    $('f-note').textContent = f ? 'Les changements s’appliquent aussi aux mois à venir déjà créés, tant que la dépense n’est pas cochée.'
-                                : 'Elle sera ajoutée tout de suite au mois choisi, puis à chaque nouveau mois.';
-    $('f-del').hidden = !f; $('f-del').textContent = 'Supprimer'; $('f-err').textContent = ''; markMissing([], FF);
-    fSnap = fState();
-    openSheet('v-fixe', f ? 'Modifier la dépense fixe' : 'Nouvelle dépense fixe', () => fState() !== fSnap);
-    if (!f) setTimeout(() => $('f-lib').focus(), 260);
+    js.value = f && f.jour && f.genre === 'fixe' ? String(f.jour) : '';
+    $('r-note').textContent = f ? 'Les changements s’appliquent aux échéances non cochées du mois en cours et des mois suivants. Les mois passés et les échéances déjà cochées ne changent pas.'
+                                : 'Les échéances seront ajoutées automatiquement, à partir du mois en cours.';
+    $('r-del').hidden = !f; $('r-del').textContent = 'Supprimer';
+    $('r-stop').hidden = !f || rGenre !== 'abonnement' || isOver(f);
+    $('r-err').textContent = ''; markMissing([], RF); startHint();
+    rSnap = rState();
+    openSheet('v-rec', f ? G.modifier : G.nouveau, () => rState() !== rSnap);
+    if (!f) setTimeout(() => $('r-lib').focus(), 260);
   }
-  $('fx-new').onclick = () => openFixe(null);
+  $('rec-new').onclick = () => openRec(null, recGenre);
 
-  $('v-fixe').addEventListener('submit', async ev => {
+  // Re-synchronise les échéances à venir d'une récurrence (après modification, résiliation, suppression)
+  async function resyncFuture(f, removeOnly){
+    const table = f.genre === 'revenu' ? 'entrees' : 'depenses', doneCol = f.genre === 'revenu' ? 'recue' : 'payee';
+    const k = nowKey();
+    let r = await sb.from(table).delete().eq('fixe_id', f.id).eq(doneCol, false).gte('mois', k);
+    if (r.error) return r.error;
+    if (removeOnly) return null;
+    const { data: done, error } = await sb.from(table).select('mois,date').eq('fixe_id', f.id).eq(doneCol, true).gte('mois', k);
+    if (error) return error;
+    r = await sb.from('echeances').delete().eq('fixe_id', f.id).gte('cle', k);
+    if (r.error) return r.error;
+    const keep = (done || []).map(d => ({ user_id: user.id, fixe_id: f.id, cle: f.periode === 'mois' ? d.mois : (d.date || d.mois) }));
+    if (keep.length) { r = await sb.from('echeances').upsert(keep, { onConflict: 'fixe_id,cle', ignoreDuplicates: true }); if (r.error) return r.error; }
+    return null;
+  }
+
+  $('v-rec').addEventListener('submit', async ev => {
     ev.preventDefault();
-    const lib = $('f-lib').value.trim(), amt = parseAmt($('f-amt').value), cat = readSel('f-cat'), meth = readSel('f-meth');
-    const debut = $('f-debut').value, jour = $('f-jour').value ? Number($('f-jour').value) : null;
+    const lib = $('r-lib').value.trim(), amt = parseAmt($('r-amt').value), per = $('r-per').value, start = $('r-start').value, fin = $('r-fin').value || null;
+    const cat = readSel('r-cat'), meth = readSel('r-meth'), src = readSel('r-src');
     const miss = [], names = [];
-    if (!lib) { miss.push('ff-lib'); names.push('le libellé'); }
-    if (!(amt > 0)) { miss.push('ff-amt'); names.push('le montant'); }
-    if (!cat) { miss.push('ff-cat'); names.push('la catégorie'); }
-    if (!meth) { miss.push('ff-meth'); names.push('la carte utilisée'); }
-    if (miss.length) { markMissing(miss, FF); $('f-err').textContent = 'À compléter : ' + names.join(', ') + '.'; return; }
-    $('f-save').disabled = true;
-    const data = { libelle: lib, montant: amt, categorie: cat, moyen: meth, debut, date_debut: debut + '-01', jour, genre: 'fixe', periode: 'mois' };
+    if (!lib) { miss.push('rf-lib'); names.push('le libellé'); }
+    if (!(amt > 0)) { miss.push('rf-amt'); names.push('le montant'); }
+    if (rGenre !== 'fixe' && !start) { miss.push('rf-start'); names.push(rGenre === 'revenu' ? 'la date du premier versement' : 'la date du premier prélèvement'); }
+    if (rGenre !== 'revenu' && !cat) { miss.push('rf-cat'); names.push('la catégorie'); }
+    if (rGenre !== 'revenu' && !meth) { miss.push('rf-meth'); names.push('la carte utilisée'); }
+    if (rGenre === 'revenu' && !src) { miss.push('rf-src'); names.push('la source'); }
+    if (miss.length) { markMissing(miss, RF); $('r-err').textContent = 'À compléter : ' + names.join(', ') + '.'; return; }
+    const debutDate = rGenre === 'fixe' ? $('r-debut').value + '-01' : start;
+    if (fin && fin < debutDate) { markMissing(['rf-fin'], RF); $('r-err').textContent = 'La date de fin doit être après le début.'; return; }
+    const data = { genre: rGenre, libelle: lib, montant: amt, fin,
+      periode: rGenre === 'fixe' ? 'mois' : per, date_debut: debutDate, debut: debutDate.slice(0, 7),
+      jour: rGenre === 'fixe' ? ($('r-jour').value ? Number($('r-jour').value) : null) : (per === 'mois' ? Number(start.slice(8)) : null),
+      categorie: rGenre === 'revenu' ? null : cat, moyen: rGenre === 'revenu' ? null : meth, source: rGenre === 'revenu' ? src : '' };
+    $('r-save').disabled = true;
     let error;
-    if (fEditing) {
-      ({ error } = await sb.from('fixes').update(data).eq('id', fEditing.id));
-      if (!error) {
-        const pending = all.filter(d => d.fixe_id === fEditing.id && !d.payee && d.mois >= nowKey());
-        for (const d of pending) {
-          const patch = { libelle: lib, montant: amt, categorie: cat, moyen: meth };
-          if (jour) { const last = new Date(Number(d.mois.slice(0, 4)), Number(d.mois.slice(5)), 0).getDate(); patch.date = d.mois + '-' + String(Math.min(jour, last)).padStart(2, '0'); }
-          const r = await sb.from('depenses').update(patch).eq('id', d.id);
-          if (r.error) { error = r.error; break; }
-        }
-      }
+    if (rEditing) {
+      ({ error } = await sb.from('fixes').update(data).eq('id', rEditing.id));
+      if (!error) error = await resyncFuture(Object.assign({}, rEditing, data));
     } else {
       ({ error } = await sb.from('fixes').insert(Object.assign({ user_id: user.id }, data)));
     }
-    $('f-save').disabled = false;
-    if (error) { $('f-err').textContent = "L'enregistrement n'a pas abouti. Vérifiez votre connexion et réessayez."; console.error(error); return; }
-    const wasEdit = !!fEditing;
+    $('r-save').disabled = false;
+    if (error) { $('r-err').textContent = "L'enregistrement n'a pas abouti. Vérifiez votre connexion et réessayez."; console.error(error); return; }
+    const wasEdit = !!rEditing, G = GENRES[rGenre];
+    recGenre = rGenre; store.set('carnet-rec-genre', recGenre);
     closeSheet(true); applied.clear(); await load();
-    toast(wasEdit ? 'Dépense fixe modifiée' : 'Dépense fixe ajoutée');
+    toast(wasEdit ? 'Modifications enregistrées' : (G.un.charAt(0).toUpperCase() + G.un.slice(1)) + ' ajouté' + (rGenre === 'fixe' ? 'e' : ''));
   });
-  $('f-del').onclick = async () => {
-    if (!fDelArmed) { fDelArmed = true; $('f-del').textContent = 'Confirmer'; return; }
-    const id = fEditing.id;
-    let { error } = await sb.from('depenses').delete().eq('fixe_id', id).eq('payee', false).gte('mois', nowKey());
-    if (!error) ({ error } = await sb.from('fixes').delete().eq('id', id));
-    if (error) { $('f-err').textContent = "La suppression n'a pas abouti. Réessayez."; console.error(error); return; }
+  $('r-stop').onclick = async () => {
+    const f = rEditing, t = todayIso();
+    let { error } = await sb.from('fixes').update({ fin: t }).eq('id', f.id);
+    if (!error) error = await resyncFuture(Object.assign({}, f, { fin: t }));
+    if (error) { $('r-err').textContent = "La résiliation n'a pas abouti. Réessayez."; console.error(error); return; }
+    closeSheet(true); applied.clear(); await load();
+    toast('« ' + f.libelle + ' » résilié. Les prélèvements à venir sont retirés.');
+  };
+  $('r-del').onclick = async () => {
+    if (!rDelArmed) { rDelArmed = true; $('r-del').textContent = 'Confirmer'; return; }
+    const f = rEditing;
+    let error = await resyncFuture(f, true);
+    if (!error) ({ error } = await sb.from('fixes').delete().eq('id', f.id));
+    if (error) { $('r-err').textContent = "La suppression n'a pas abouti. Réessayez."; console.error(error); return; }
     closeSheet(true); await load();
-    toast('Dépense fixe supprimée. Les mois passés et les dépenses cochées sont conservés.');
+    toast('Supprimé. Les échéances passées et déjà cochées sont conservées.');
   };
 
   /* ---------- compte ---------- */
@@ -1369,7 +1558,8 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
       budgets: Object.entries(budgets).map(([mois, montant]) => ({ mois, montant })),
       cartes: cartes.map(({ nom, couleur }) => ({ nom, couleur })),
       categories: cats.map(({ nom, couleur }) => ({ nom, couleur })),
-      fixes: fixes.map(({ genre, libelle, montant, categorie, moyen, debut, jour }) => ({ genre, libelle, montant, categorie, moyen, debut, jour })) };
+      sources: srcs.slice(),
+      fixes: fixes.map(({ genre, libelle, montant, categorie, moyen, periode, date_debut, debut, jour, fin, source }) => ({ genre, libelle, montant, categorie, moyen, periode, date_debut, debut, jour, fin, source })) };
     const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
     a.download = 'carnet-depenses-' + todayIso() + '.json';
@@ -1391,12 +1581,18 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
         .map(b => ({ user_id: user.id, mois: b.mois, montant: Number(b.montant) }));
       const crd = Array.isArray(j.cartes) ? j.cartes.filter(c => c && c.nom).map(c => ({ user_id: user.id, nom: String(c.nom).slice(0,40), couleur: /^#[0-9a-fA-F]{6}$/.test(c.couleur || '') ? c.couleur : '' })) : [];
       const cts = Array.isArray(j.categories) ? j.categories.filter(c => c && c.nom).map(c => ({ user_id: user.id, nom: String(c.nom).slice(0,30), couleur: /^#[0-9a-fA-F]{6}$/.test(c.couleur || '') ? c.couleur : '', ordre: 100 })) : [];
-      const fx = Array.isArray(j.fixes) ? j.fixes.filter(f => f && f.libelle && Number(f.montant) > 0 && f.categorie && f.moyen && /^\d{4}-\d{2}$/.test(f.debut))
-        .map(f => ({ user_id: user.id, genre: 'fixe', periode: 'mois', libelle: String(f.libelle).slice(0,80), montant: Number(f.montant), categorie: String(f.categorie).slice(0,30), moyen: String(f.moyen).slice(0,40), debut: f.debut, date_debut: f.debut + '-01', jour: Number(f.jour) >= 1 && Number(f.jour) <= 31 ? Number(f.jour) : null })) : [];
-      pending = { dep, bud, crd, cts, fx };
+      const GEN = ['fixe','abonnement','revenu'], PERS = ['semaine','4semaines','mois','trimestre','an'];
+      const fx = Array.isArray(j.fixes) ? j.fixes.filter(f => f && f.libelle && Number(f.montant) > 0 && (okDate(f.date_debut) || /^\d{4}-\d{2}$/.test(f.debut || ''))
+          && (f.genre === 'revenu' ? !!f.source : (f.categorie && f.moyen)))
+        .map(f => { const dd = okDate(f.date_debut) ? f.date_debut : f.debut + '-01', g = GEN.includes(f.genre) ? f.genre : 'fixe';
+          return { user_id: user.id, genre: g, periode: PERS.includes(f.periode) ? f.periode : 'mois', libelle: String(f.libelle).slice(0,80), montant: Number(f.montant),
+            categorie: g === 'revenu' ? null : String(f.categorie).slice(0,30), moyen: g === 'revenu' ? null : String(f.moyen).slice(0,40), source: g === 'revenu' ? String(f.source).slice(0,40) : '',
+            date_debut: dd, debut: dd.slice(0, 7), fin: okDate(f.fin) ? f.fin : null, jour: Number(f.jour) >= 1 && Number(f.jour) <= 31 ? Number(f.jour) : null }; }) : [];
+      const sr = Array.isArray(j.sources) ? j.sources.filter(x => typeof x === 'string' && x.trim()).map(x => ({ user_id: user.id, nom: x.trim().slice(0, 40) })) : [];
+      pending = { dep, bud, crd, cts, fx, sr };
       const parts = [dep.length + ' dépense' + (dep.length>1?'s':''), bud.length + ' budget' + (bud.length>1?'s':'')];
       if (crd.length) parts.push(crd.length + ' carte' + (crd.length>1?'s':''));
-      if (fx.length) parts.push(fx.length + ' dépense' + (fx.length>1?'s':'') + ' fixe' + (fx.length>1?'s':''));
+      if (fx.length) parts.push(fx.length + ' récurrence' + (fx.length>1?'s':'') + ' (abonnements, fixes, revenus)');
       $('s-confirm-txt').textContent = parts.join(', ') + ' seront ajoutés à vos données. Les budgets des mêmes mois seront remplacés.';
       $('s-confirm').hidden = false;
     } catch(e){ $('s-err').textContent = "Ce fichier n'est pas un export du carnet de dépenses."; }
@@ -1405,14 +1601,15 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   $('s-go').onclick = async ()=>{
     if (!pending) return;
     $('s-go').disabled = true;
-    const { dep, bud, crd, cts, fx } = pending;
+    const { dep, bud, crd, cts, fx, sr } = pending;
+    const r0 = sr.length ? await sb.from('sources').upsert(sr, { onConflict: 'user_id,nom', ignoreDuplicates: true }) : { error: null };
     const r1 = dep.length ? await sb.from('depenses').insert(dep) : { error: null };
     const r2 = bud.length ? await sb.from('budgets').upsert(bud, { onConflict: 'user_id,mois' }) : { error: null };
     const r3 = crd.length ? await sb.from('cartes').upsert(crd, { onConflict: 'user_id,nom', ignoreDuplicates: true }) : { error: null };
     const r4 = cts.length ? await sb.from('categories').upsert(cts, { onConflict: 'user_id,nom', ignoreDuplicates: true }) : { error: null };
     const r5 = fx.length ? await sb.from('fixes').insert(fx) : { error: null };
     $('s-go').disabled = false;
-    const er = r1.error || r2.error || r3.error || r4.error || r5.error;
+    const er = r0.error || r1.error || r2.error || r3.error || r4.error || r5.error;
     if (er) { $('s-err').textContent = "L'import n'a pas abouti. Vérifiez votre connexion et réessayez."; console.error(er); return; }
     pending = null; $('s-confirm').hidden = true; applied.clear(); toast('Import terminé'); load();
   };
@@ -1537,13 +1734,13 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     $('auth').hidden = true; $('app').hidden = false;
     if (changed) {
       const c = store.get(cacheKey());
-      if (c && Array.isArray(c.all) && c.all.length && 'date' in c.all[0]) { all = c.all; budgets = c.budgets || {}; cartes = c.cartes || []; fixes = c.fixes || []; cats = c.cats || []; loaded = true; setSync(false); }
+      if (c && Array.isArray(c.all) && c.all.length && 'date' in c.all[0]) { all = c.all; budgets = c.budgets || {}; cartes = c.cartes || []; fixes = c.fixes || []; cats = c.cats || []; srcs = c.srcs || []; loaded = true; setSync(false); }
       else { all = []; budgets = {}; loaded = false; }
       setTab('mois'); load();
     }
   }
   function showAuth(){
-    user = null; all = []; budgets = {}; cartes = []; fixes = []; cats = []; applied.clear(); loaded = false;
+    user = null; all = []; budgets = {}; cartes = []; fixes = []; cats = []; srcs = []; applied.clear(); loaded = false;
     closeSheet(true);
     $('app').hidden = true; $('auth').hidden = false; $('a-pass').value = '';
     if (mode === 'recovery') return;
