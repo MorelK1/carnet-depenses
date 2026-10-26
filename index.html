@@ -361,6 +361,11 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 .dot{display:inline-block}
 /* enveloppes */
 #env-w{display:grid;gap:18px}
+.tag.mb{background:var(--accent-soft);color:var(--accent)}
+.row.other{opacity:.62}
+.row.other .amt.pos{color:var(--muted)}
+.othnote:first-child{border-top:0}
+.othnote{padding:10px 14px 4px;font-size:.8rem;color:var(--muted);border-top:1px solid var(--line)}
 #env-w[hidden]{display:none}
 .envs{display:grid;gap:8px}
 .env{display:grid;gap:8px;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:12px 14px}
@@ -452,7 +457,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 </header>
 
 <div class="wrap">
-  <div class="upgrade" id="upgrade" hidden><b>Mise à jour de la base nécessaire</b>Exécutez le fichier supabase-v3.sql dans Supabase (SQL Editor), puis rouvrez l'application.</div>
+  <div class="upgrade" id="upgrade" hidden><b>Mise à jour de la base nécessaire</b>Exécutez le fichier <span id="upgrade-f">supabase-v3.sql</span> dans Supabase (SQL Editor), puis rouvrez l'application.</div>
 
   <!-- MON MOIS -->
   <section class="page" id="p-mois" aria-label="Mon mois">
@@ -638,6 +643,10 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     </div>
     <div class="field" id="nf-amt"><label for="n-amt">Montant</label><div class="amtwrap" data-sym="€"><input class="inp big" id="n-amt" inputmode="decimal" placeholder="0,00"></div></div>
     <div class="field" id="nf-date"><label for="n-date" id="n-date-l">Date prévue</label><input class="inp datein" id="n-date" type="date"></div>
+    <div class="field" id="nf-mb"><span class="flbl">Compte pour le budget de</span><div class="chips" id="n-mb">
+      <button type="button" class="chip" data-v="0" aria-pressed="true">Ce mois-là</button>
+      <button type="button" class="chip" data-v="1" aria-pressed="false">Le mois suivant</button>
+    </div><small class="hint" id="n-mb-h"></small></div>
     <div class="field"><label for="n-lib">Précision (facultatif)</label><input class="inp" id="n-lib" maxlength="80" placeholder="Ex. Salaire d'octobre, remboursement Léa…"></div>
     <button type="button" class="switch" id="n-recue" role="switch" aria-checked="false"><span>Déjà reçue</span><span class="tg"></span></button>
     <div class="err" id="n-err" role="alert"></div>
@@ -764,6 +773,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     <div class="field" id="rf-src"><label for="r-src">Source</label><div class="selwrap"><select class="inp" id="r-src"></select></div>
       <div class="newcat" id="r-newsrc-w" hidden><input class="inp" id="r-newsrc" maxlength="40" placeholder="Ex. Bourse, Freelance, Allocations…" aria-label="Nom de la nouvelle source"><button type="button" class="ghost" id="r-newsrc-ok">Ajouter</button></div>
     </div>
+    <button type="button" class="switch" id="r-decal" role="switch" aria-checked="false"><span>Versé pour le mois suivant<small class="hint" style="display:block;font-weight:400">Ex. salaire reçu le 28 pour le budget du mois d'après</small></span><span class="tg"></span></button>
     <div class="field" id="rf-fin"><label for="r-fin" id="r-fin-l">Date de fin (facultatif)</label><input class="inp datein" id="r-fin" type="date"></div>
     <p class="note" id="r-note"></p>
     <div class="err" id="r-err" role="alert"></div>
@@ -930,7 +940,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 
   /* ---------- état ---------- */
   let user = null, all = [], budgets = {}, cartes = [], fixes = [], cats = [], srcs = [], loaded = false, v3 = true;
-  let groupes = [], entrees = [], reps = {}, clos = {};
+  let groupes = [], entrees = [], reps = {}, clos = {}, v4 = true;
   const applied = new Set();
   let filter = store.get('carnet-filtre') || 'all';
   let tab = 'mois';
@@ -959,7 +969,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   const normGrp = x => ({ id: x.id, nom: x.nom, couleur: x.couleur || '', ordre: x.ordre || 0, role: x.role || null,
     modele_montant: x.modele_montant != null ? Number(x.modele_montant) : null, modele_pct: x.modele_pct != null ? Number(x.modele_pct) : null });
   async function load(){
-    const [d, b, c, f, k, so, gr, en, rp, cl] = await Promise.all([
+    const [d, b, c, f, k, so, gr, en, rp, cl, t4] = await Promise.all([
       sb.from('depenses').select('*').order('date', { ascending: true, nullsFirst: true }),
       sb.from('budgets').select('mois,montant'),
       sb.from('cartes').select('*').order('cree', { ascending: true }),
@@ -969,17 +979,20 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
       sb.from('groupes').select('*').order('ordre', { ascending: true }),
       sb.from('entrees').select('*').order('date', { ascending: true, nullsFirst: true }),
       sb.from('repartitions').select('mois,groupe_id,montant,pourcentage'),
-      sb.from('clotures').select('mois,montant')
+      sb.from('clotures').select('mois,montant'),
+      sb.from('fixes').select('decalage').limit(1)
     ]);
     if (d.error || b.error) { setSync(false); if (!loaded) toast('Impossible de charger vos données. Vérifiez votre connexion.'); return; }
     v3 = !k.error && !c.error && !f.error;
-    $('upgrade').hidden = v3;
+    v4 = v3 && !t4.error;
+    $('upgrade').hidden = v4; $('upgrade-f').textContent = v3 ? 'supabase-v4.sql' : 'supabase-v3.sql (puis supabase-v4.sql)';
+    $('nf-mb').hidden = !v4; $('r-decal').hidden = !v4;
     all = d.data.map(norm);
     budgets = {}; b.data.forEach(r => budgets[r.mois] = Number(r.montant));
     if (!c.error) cartes = c.data.map(x => ({ id: x.id, nom: x.nom, couleur: x.couleur || '' }));
     if (!f.error) fixes = f.data.map(x => ({ id: x.id, genre: x.genre || 'fixe', libelle: x.libelle, montant: Number(x.montant) || 0, categorie: x.categorie || null, moyen: x.moyen || null,
       periode: x.periode || 'mois', date_debut: x.date_debut || (x.debut ? x.debut + '-01' : null), debut: x.debut || (x.date_debut || '').slice(0, 7),
-      jour: x.jour || null, fin: x.fin || null, source: x.source || '' }));
+      jour: x.jour || null, fin: x.fin || null, source: x.source || '', decalage: x.decalage ? 1 : 0 }));
     if (!so.error) srcs = so.data.map(x => x.nom);
     if (!gr.error) groupes = gr.data.map(normGrp);
     if (!en.error) entrees = en.data.map(normEnt);
@@ -990,15 +1003,19 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
       if (!cats.length && !load.initDone) { load.initDone = true; const r = await sb.rpc('initialiser_compte'); if (!r.error) return load(); }
     }
     loaded = true; setSync(true); saveCache(); render();
-    ensureRecurrences(nowKey()); ensureRecurrences(key(cur));
+    ensureAround(nowKey()); ensureAround(key(cur));
   }
-  async function ensureRecurrences(k){
-    if (!v3 || !fixes.length || applied.has(k)) return;
-    applied.add(k);
-    const { data, error } = await sb.rpc('appliquer_recurrences', { p_mois: k });
-    if (error) { applied.delete(k); console.error(error); return; }
+  async function ensureRecurrences(k, revOnly){
+    const tag = k + (revOnly ? ':r' : '');
+    if (!v3 || !fixes.length || applied.has(tag)) return;
+    if (revOnly && !(v4 && fixes.some(f => f.genre === 'revenu' && f.decalage))) return;
+    applied.add(tag);
+    const { data, error } = await sb.rpc('appliquer_recurrences', revOnly ? { p_mois: k, p_revenus_seuls: true } : { p_mois: k });
+    if (error) { applied.delete(tag); console.error(error); return; }
     if (data > 0) load();
   }
+  // Le mois affiché + le mois précédent pour les revenus versés « pour le mois suivant »
+  const ensureAround = k => { ensureRecurrences(k); ensureRecurrences(key(shift(monthOfKey(k), -1)), true); };
 
   /* ---------- navigation ---------- */
   const PAGES = { mois: 'p-mois', depenses: 'p-depenses', recurrents: 'p-recurrents', compte: 'p-compte' };
@@ -1027,14 +1044,14 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 
   /* ---------- budget : calculs ---------- */
   const r2 = v => Math.round(v * 100) / 100;
-  const normEnt = r => ({ id: r.id, mois: r.mois, date: r.date || null, source: r.source || 'Autre', libelle: r.libelle || '', montant: Number(r.montant) || 0, recue: !!r.recue, fixe_id: r.fixe_id || null, verif: !!r.date_a_verifier });
+  const normEnt = r => ({ id: r.id, mois: r.mois, mb: r.mois_budget || r.mois, date: r.date || null, source: r.source || 'Autre', libelle: r.libelle || '', montant: Number(r.montant) || 0, recue: !!r.recue, fixe_id: r.fixe_id || null, verif: !!r.date_a_verifier });
   const grpOfCat = name => { const c = cats.find(x => x.nom === name); return c ? c.groupe_id : null; };
   const grpById = id => groupes.find(g => g.id === id);
   const hasModel = () => groupes.some(g => g.modele_montant != null || g.modele_pct != null);
   const lvlOf = pct => pct > 1 ? 3 : pct >= .9 ? 2 : pct >= .7 ? 1 : 0;
   // Répartition du mois : celle du mois si elle existe, sinon le modèle
   function alloc(k){
-    const ent = entrees.filter(e => e.mois === k);
+    const ent = entrees.filter(e => e.mb === k);
     const E = r2(ent.reduce((s, e) => s + e.montant, 0));
     const r = reps[k] || {};
     let src = null; const rows = {};
@@ -1143,6 +1160,8 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     $('ent-tot').textContent = a.ent.length ? eur.format(a.E) + (a.ent.some(e => !e.recue) ? ' · ' + eur.format(r2(a.ent.filter(e => e.recue).reduce((s, e) => s + e.montant, 0))) + ' reçus' : '') : '';
     if (!a.ent.length) { const r = el('div', 'crow'); const t = el('div', 'nm', v3 ? 'Aucune entrée ce mois-ci. Ajoutez votre salaire ou vos autres revenus pour répartir votre budget.' : 'Mettez d’abord à jour la base.'); t.style.fontWeight = '400'; t.style.color = 'var(--muted)'; r.append(t); el2.append(r); }
     a.ent.slice().sort(byDate).forEach(e => el2.append(entRow(e)));
+    const oth0 = otherEnt(k);
+    if (oth0.length) { el2.append(el('div', 'othnote', 'Reçues ce mois-ci pour le budget d’un autre mois :')); oth0.forEach(e => el2.append(entRow(e, true))); }
     $('rep-open').textContent = '';
     $('rep-open').append(...(() => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('viewBox', '0 0 24 24'); s.innerHTML = '<path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/>'; return [s]; })(),
       document.createTextNode(a.src === 'mois' ? 'Modifier la répartition' : 'Répartir mon budget'));
@@ -1169,15 +1188,17 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     });
   }
 
-  function entRow(e){
-    const r = el('div', 'row' + (e.recue ? ' done in' : ' in'));
+  function entRow(e, other){
+    const r = el('div', 'row' + (e.recue ? ' done in' : ' in') + (other ? ' other' : ''));
     const cb = el('button', 'check'); cb.type = 'button'; cb.setAttribute('role', 'checkbox'); cb.setAttribute('aria-checked', e.recue);
     cb.setAttribute('aria-label', 'Reçue : ' + (e.libelle || e.source));
     cb.innerHTML = '<span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>';
     cb.onclick = () => setRecue(e, !e.recue);
     const main = el('button', 'rowmain'); main.type = 'button'; main.setAttribute('aria-label', 'Modifier ' + (e.libelle || e.source));
     const txt = el('span', 'rowtxt'); txt.append(el('span', 'lib', e.libelle || e.source));
-    const meta = el('span', 'meta'); meta.append(el('span', null, (e.date ? fmtDay(e.date) : 'Sans date') + ' · ' + e.source));
+    const shifted = e.mb !== e.mois;
+    const meta = el('span', 'meta'); meta.append(el('span', null, (e.date ? (shifted ? (e.recue ? 'reçue le ' : 'prévue le ') + fmtDay(e.date) : fmtDay(e.date)) : 'Sans date') + ' · ' + e.source));
+    if (shifted && other) meta.append(el('span', 'tag mb', 'budget ' + deMois(e.mb)));
     meta.append(e.recue ? el('span', 'tag', 'reçue') : el('span', 'tag imp', 'attendue'));
     if (e.fixe_id) meta.append(el('span', 'tag fx', 'récurrent'));
     txt.append(meta);
@@ -1185,6 +1206,9 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     main.onclick = () => openEnt(e);
     r.append(cb, main); return r;
   }
+  // Entrées reçues ce mois-ci mais comptées dans le budget d'un autre mois (rappel)
+  const deMois = k => { const m = monthName(monthOfKey(k)).split(' ')[0]; return (/^[aeiouyéèêâàîïôûh]/i.test(m) ? 'd’' : 'de ') + m; };
+  const otherEnt = k => entrees.filter(e => e.mois === k && e.mb !== k).sort(byDate);
   async function setRecue(e, v){
     e.recue = v; render();
     const { error } = await sb.from('entrees').update({ recue: v }).eq('id', e.id);
@@ -1273,6 +1297,8 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     const list = $('ent-full'); list.textContent = '';
     if (!a.ent.length) { const r = el('div', 'crow'); const t = el('div', 'nm', 'Aucune entrée en ' + monthName(cur) + '.'); t.style.fontWeight = '400'; t.style.color = 'var(--muted)'; r.append(t); list.append(r); }
     a.ent.slice().sort(byDate).forEach(e => list.append(entRow(e)));
+    const oth = otherEnt(k);
+    if (oth.length) { const h = el('div', 'othnote', 'Reçues ce mois-ci pour le budget d’un autre mois :'); list.append(h); oth.forEach(e => list.append(entRow(e, true))); }
   }
   document.querySelectorAll('#kind-seg button').forEach(b => b.onclick = () => { kind = b.dataset.k; render(); });
   $('fbar-off').onclick = () => { listFilter = null; render(); };
@@ -1501,8 +1527,8 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   $('b-del').onclick = ()=>{ closeSheet(true); saveBudget(null); };
 
   /* ---------- mois ---------- */
-  $('prev').onclick = ()=>{ cur = shift(cur,-1); if (listFilter && listFilter.type === 'verif') listFilter = null; render(); ensureRecurrences(key(cur)); };
-  $('next').onclick = ()=>{ cur = shift(cur, 1); if (listFilter && listFilter.type === 'verif') listFilter = null; render(); ensureRecurrences(key(cur)); };
+  $('prev').onclick = ()=>{ cur = shift(cur,-1); if (listFilter && listFilter.type === 'verif') listFilter = null; render(); ensureAround(key(cur)); };
+  $('next').onclick = ()=>{ cur = shift(cur, 1); if (listFilter && listFilter.type === 'verif') listFilter = null; render(); ensureAround(key(cur)); };
   document.querySelectorAll('#dep-seg button').forEach(b => b.onclick = ()=>{ filter = b.dataset.f; store.set('carnet-filtre', filter); render(); });
 
   $('copy').onclick = async ()=>{
@@ -1602,7 +1628,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
       const nm = el('div', 'nm', f.libelle);
       const per = f.genre === 'fixe' ? (f.jour ? 'le ' + f.jour + ' de chaque mois' : 'chaque mois, sans jour précis') : (PER[f.periode] || PER.mois).court;
       const who = f.genre === 'revenu' ? f.source : f.moyen;
-      let line = per + ' · ' + who;
+      let line = per + ' · ' + who + (f.genre === 'revenu' && f.decalage ? ' · pour le mois suivant' : '');
       if (isOver(f)) line = (f.genre === 'abonnement' ? 'Résilié le ' : 'Terminé le ') + fmtDay(f.fin) + ' · ' + who;
       else if (f.date_debut > today) line += ' · commence le ' + fmtDay(f.date_debut);
       else if (f._next) line += ' · ' + (f.genre === 'revenu' ? 'prochain versement ' : 'prochain ') + whenTxt(f._next);
@@ -1673,7 +1699,9 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     const a = occAfter(f, todayIso()); const b2 = a ? occAfter(f, addDays(a, 1)) : null;
     h.textContent = a ? 'Prochaines échéances : ' + fmtDay(a) + (b2 ? ', ' + fmtDay(b2) : '') + '…' : 'Plus aucune échéance à venir.';
   }
-  const rState = () => JSON.stringify(['r-lib','r-amt','r-per','r-start','r-debut','r-jour','r-cat','r-meth','r-src','r-fin'].map(i => $(i).value));
+  let rDecal = false;
+  $('r-decal').onclick = () => { rDecal = !rDecal; $('r-decal').setAttribute('aria-checked', rDecal); };
+  const rState = () => JSON.stringify([...['r-lib','r-amt','r-per','r-start','r-debut','r-jour','r-cat','r-meth','r-src','r-fin'].map(i => $(i).value), rDecal]);
 
   function openRec(f, genre){
     rEditing = f || null; rGenre = f ? f.genre : (genre || recGenre); rDelArmed = false;
@@ -1681,6 +1709,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     show('rf-per', rGenre !== 'fixe'); show('rf-start', rGenre !== 'fixe');
     show('rf-debut', rGenre === 'fixe'); show('rf-jour', rGenre === 'fixe');
     show('rf-cat', rGenre !== 'revenu'); show('rf-meth', rGenre !== 'revenu'); show('rf-src', rGenre === 'revenu');
+    $('r-decal').hidden = !(v4 && rGenre === 'revenu'); rDecal = !!(f && f.decalage); $('r-decal').setAttribute('aria-checked', rDecal);
     $('r-lib').placeholder = { abonnement: 'Ex. Netflix, Spotify, salle de sport…', fixe: 'Ex. Loyer, Électricité…', revenu: 'Ex. Salaire, Bourse…' }[rGenre];
     $('r-start-l').textContent = rGenre === 'revenu' ? 'Date du premier versement' : 'Date du premier prélèvement';
     $('r-lib').value = f ? f.libelle : '';
@@ -1744,7 +1773,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     if (miss.length) { markMissing(miss, RF); $('r-err').textContent = 'À compléter : ' + names.join(', ') + '.'; return; }
     const debutDate = rGenre === 'fixe' ? $('r-debut').value + '-01' : start;
     if (fin && fin < debutDate) { markMissing(['rf-fin'], RF); $('r-err').textContent = 'La date de fin doit être après le début.'; return; }
-    const data = { genre: rGenre, libelle: lib, montant: amt, fin,
+    const data = { genre: rGenre, libelle: lib, montant: amt, fin, ...(v4 ? { decalage: rGenre === 'revenu' && rDecal ? 1 : 0 } : {}),
       periode: rGenre === 'fixe' ? 'mois' : per, date_debut: debutDate, debut: debutDate.slice(0, 7),
       jour: rGenre === 'fixe' ? ($('r-jour').value ? Number($('r-jour').value) : null) : (per === 'mois' ? Number(start.slice(8)) : null),
       categorie: rGenre === 'revenu' ? null : cat, moyen: rGenre === 'revenu' ? null : meth, source: rGenre === 'revenu' ? src : '' };
@@ -1791,7 +1820,22 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   /* ---------- entrée d'argent ---------- */
   let nEditing = null, nRecue = false, nDelArmed = false, nSnap = '';
   const NF = ['nf-src','nf-amt','nf-date'];
-  const nState = () => JSON.stringify([$('n-src').value, $('n-amt').value, $('n-date').value, $('n-lib').value, nRecue]);
+  let nNext = false;
+  const nState = () => JSON.stringify([$('n-src').value, $('n-amt').value, $('n-date').value, $('n-lib').value, nRecue, nNext]);
+  function mbPaint(){
+    document.querySelectorAll('#n-mb .chip').forEach(b => b.setAttribute('aria-pressed', (b.dataset.v === '1') === nNext));
+    const d = $('n-date').value;
+    if (!d) { $('n-mb').children[0].textContent = 'Le mois de la date'; $('n-mb').children[1].textContent = 'Le mois suivant'; $('n-mb-h').textContent = ''; return; }
+    const m = monthOfKey(d.slice(0, 7)), n = shift(m, 1);
+    $('n-mb').children[0].textContent = monthName(m); $('n-mb').children[1].textContent = monthName(n);
+    $('n-mb-h').textContent = nNext ? 'Par exemple un salaire reçu fin ' + monthName(m).split(' ')[0] + ' pour vivre en ' + monthName(n).split(' ')[0] + '.' : '';
+  }
+  document.querySelectorAll('#n-mb .chip').forEach(b => b.onclick = () => { nNext = b.dataset.v === '1'; mbPaint(); });
+  $('n-date').addEventListener('change', () => {
+    // Saisie depuis le mois affiché d'une date du mois précédent : on propose « le mois suivant »
+    const d = $('n-date').value; if (d && !nEditing && d.slice(0, 7) === key(shift(cur, -1))) nNext = true;
+    mbPaint();
+  });
   function fillSrc(sel, value){
     sel.textContent = '';
     const names = [...new Set([...srcs, value].filter(Boolean))];
@@ -1825,6 +1869,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     $('n-date').value = e && e.date ? e.date : '';
     $('n-lib').value = e ? e.libelle : '';
     nRecue = e ? e.recue : false; nPaint();
+    nNext = !!(e && e.mb !== e.mois); mbPaint();
     $('n-save').textContent = e ? 'Enregistrer' : 'Ajouter';
     $('n-del').hidden = !e; $('n-del').textContent = 'Supprimer'; $('n-err').textContent = ''; markMissing([], NF);
     nSnap = nState();
@@ -1839,16 +1884,18 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     if (!date) { miss.push('nf-date'); names.push(nRecue ? 'la date de réception' : 'la date prévue'); }
     if (miss.length) { markMissing(miss, NF); $('n-err').textContent = 'À compléter : ' + names.join(', ') + '.'; return; }
     const data = { source: src, montant: amt, date, mois: date.slice(0, 7), libelle: $('n-lib').value.trim(), recue: nRecue, date_a_verifier: false };
+    if (v4) data.mois_budget = nNext ? key(shift(monthOfKey(date.slice(0, 7)), 1)) : null;
+    const mbk = data.mois_budget || data.mois;
     const was = nEditing; closeSheet(true);
     if (was) {
       const { data: row, error } = await sb.from('entrees').update(data).eq('id', was.id).select().single();
       if (error) return fail("La modification n'a pas été enregistrée.", error);
-      Object.assign(was, normEnt(row)); toast('Entrée modifiée');
+      Object.assign(was, normEnt(row)); toast(mbk === key(cur) ? 'Entrée modifiée' : 'Entrée modifiée, comptée dans le budget ' + deMois(mbk) + ' ' + mbk.slice(0, 4));
     } else {
       const { data: row, error } = await sb.from('entrees').insert(Object.assign({ user_id: user.id }, data)).select().single();
       if (error) return fail("L'entrée n'a pas été enregistrée.", error);
       entrees.push(normEnt(row));
-      toast(data.mois === key(cur) ? 'Entrée ajoutée' : 'Entrée ajoutée en ' + monthName(monthOfKey(data.mois)));
+      toast(mbk === key(cur) ? 'Entrée ajoutée' : 'Entrée ajoutée au budget ' + deMois(mbk) + ' ' + mbk.slice(0, 4));
     }
     saveCache(); render();
   });
@@ -2250,10 +2297,10 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
       cartes: cartes.map(({ nom, couleur }) => ({ nom, couleur })),
       categories: cats.map(({ nom, couleur, groupe_id }) => ({ nom, couleur, groupe: (grpById(groupe_id) || {}).nom || null })),
       groupes: groupes.map(({ nom, couleur, ordre, role, modele_montant, modele_pct }) => ({ nom, couleur, ordre, role, modele_montant, modele_pct })),
-      entrees: entrees.map(({ mois, date, source, libelle, montant, recue }) => ({ mois, date, source, libelle, montant, recue })),
+      entrees: entrees.map(({ mois, mb, date, source, libelle, montant, recue }) => ({ mois, mois_budget: mb !== mois ? mb : null, date, source, libelle, montant, recue })),
       repartitions: Object.entries(reps).flatMap(([mois, r]) => Object.entries(r).map(([gid, x]) => ({ mois, groupe: (grpById(gid) || {}).nom, montant: x.montant, pourcentage: x.pct })).filter(x => x.groupe)),
       sources: srcs.slice(),
-      fixes: fixes.map(({ genre, libelle, montant, categorie, moyen, periode, date_debut, debut, jour, fin, source }) => ({ genre, libelle, montant, categorie, moyen, periode, date_debut, debut, jour, fin, source })) };
+      fixes: fixes.map(({ genre, libelle, montant, categorie, moyen, periode, date_debut, debut, jour, fin, source, decalage }) => ({ genre, libelle, montant, categorie, moyen, periode, date_debut, debut, jour, fin, source, decalage })) };
     const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
     a.download = 'carnet-depenses-' + todayIso() + '.json';
@@ -2281,10 +2328,11 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
         .map(f => { const dd = okDate(f.date_debut) ? f.date_debut : f.debut + '-01', g = GEN.includes(f.genre) ? f.genre : 'fixe';
           return { user_id: user.id, genre: g, periode: PERS.includes(f.periode) ? f.periode : 'mois', libelle: String(f.libelle).slice(0,80), montant: Number(f.montant),
             categorie: g === 'revenu' ? null : String(f.categorie).slice(0,30), moyen: g === 'revenu' ? null : String(f.moyen).slice(0,40), source: g === 'revenu' ? String(f.source).slice(0,40) : '',
-            date_debut: dd, debut: dd.slice(0, 7), fin: okDate(f.fin) ? f.fin : null, jour: Number(f.jour) >= 1 && Number(f.jour) <= 31 ? Number(f.jour) : null }; }) : [];
+            date_debut: dd, debut: dd.slice(0, 7), fin: okDate(f.fin) ? f.fin : null, ...(v4 ? { decalage: f.decalage ? 1 : 0 } : {}), jour: Number(f.jour) >= 1 && Number(f.jour) <= 31 ? Number(f.jour) : null }; }) : [];
       const sr = Array.isArray(j.sources) ? j.sources.filter(x => typeof x === 'string' && x.trim()).map(x => ({ user_id: user.id, nom: x.trim().slice(0, 40) })) : [];
       const ens = Array.isArray(j.entrees) ? j.entrees.filter(e => e && okDate(e.date) && Number(e.montant) > 0 && e.source)
-        .map(e => ({ user_id: user.id, mois: e.date.slice(0, 7), date: e.date, source: String(e.source).slice(0, 40), libelle: String(e.libelle || '').slice(0, 80), montant: Number(e.montant), recue: !!e.recue })) : [];
+        .map(e => Object.assign({ user_id: user.id, mois: e.date.slice(0, 7), date: e.date, source: String(e.source).slice(0, 40), libelle: String(e.libelle || '').slice(0, 80), montant: Number(e.montant), recue: !!e.recue },
+          v4 && /^\d{4}-\d{2}$/.test(e.mois_budget || '') ? { mois_budget: e.mois_budget } : {})) : [];
       const grs = Array.isArray(j.groupes) ? j.groupes.filter(g => g && g.nom).map(g => ({ user_id: user.id, nom: String(g.nom).slice(0, 40), couleur: /^#[0-9a-fA-F]{6}$/.test(g.couleur || '') ? g.couleur : '', ordre: Number(g.ordre) || 0, role: g.role === 'economies' ? 'economies' : null })) : [];
       const catGrp = Array.isArray(j.categories) ? j.categories.filter(c => c && c.nom && c.groupe).map(c => [String(c.nom).slice(0, 30), String(c.groupe)]) : [];
       const rps = Array.isArray(j.repartitions) ? j.repartitions.filter(r => r && /^\d{4}-\d{2}$/.test(r.mois) && r.groupe) : [];
