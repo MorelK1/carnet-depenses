@@ -1,6 +1,6 @@
 // Service worker : garde l'application disponible hors ligne.
 // Les données (Supabase) ne sont jamais mises en cache ici.
-const VERSION = 'carnet-v14';
+const VERSION = 'carnet-v15';
 const SHELL = [
   './', './index.html', './config.js', './supabase.js', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'

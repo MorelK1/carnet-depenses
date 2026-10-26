@@ -333,7 +333,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 .recsum .nextl{grid-column:1/-1;border-top:1px solid var(--hero-line);padding-top:10px;font-size:.88rem;color:var(--hero-muted)}
 .recsum .nextl b{display:inline;font-family:var(--f-body);font-size:.88rem;color:var(--hero-ink);white-space:normal}
 .amtcol{display:grid;justify-items:end;flex:none}
-.amtcol small{font-size:.72rem;color:var(--muted);font-family:var(--f-num)}
+.amtcol small{font-size:.74rem;color:var(--muted);white-space:nowrap}
 .tag.soon{display:inline-block;margin-top:4px;background:var(--warm-soft);color:var(--warm)}
 .tag.ab{background:#efe6f8;color:#6b3f99}
 @media (prefers-color-scheme: dark){.tag.ab{background:#33264a;color:#d4b8f2}}
@@ -1627,6 +1627,19 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     return d;
   }
   const inDays = d => Math.round((dObj(d) - dObj(todayIso())) / 864e5);
+  // Liste réelle des échéances entre deux dates (pas de moyenne)
+  function occsBetween(f, from, to){
+    const out = [];
+    if (f.periode === 'mois' && !f.jour) {
+      let c = monthOfKey(from.slice(0, 7));
+      while (key(c) <= to.slice(0, 7)) { const k = key(c); if (k >= f.debut && (!f.fin || k + '-01' <= f.fin)) out.push(k + '-01'); c = shift(c, 1); }
+      return out;
+    }
+    let d = occAfter(f, from), guard = 0;
+    while (d && d <= to && guard++ < 400) { out.push(d); d = occAfter(f, addDays(d, 1)); }
+    return out;
+  }
+  const monthEnd = k => addDays(key(shift(monthOfKey(k), 1)) + '-01', -1);
   const whenTxt = d => { const n = inDays(d); return n === 0 ? "aujourd'hui" : n === 1 ? 'demain' : n < 7 ? 'dans ' + n + ' jours' : 'le ' + fmtDay(d); };
 
   function renderRec(){
@@ -1645,10 +1658,13 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     // résumé
     const sum = $('rec-sum'); sum.textContent = '';
     if (active.length) {
-      const m = active.reduce((t, f) => t + perMonth(f), 0);
+      const mk = key(cur), mName = monthName(cur).split(' ')[0];
+      const inMonth = active.reduce((t, f) => t + occsBetween(f, mk + '-01', monthEnd(mk)).length * f.montant, 0);
+      const t0 = todayIso(), t1 = addDays(t0, 364);
+      const inYear = active.reduce((t, f) => t + occsBetween(f, t0, t1).length * f.montant, 0);
       const box = (lbl, val) => { const d = el('div'); d.append(el('span', null, lbl), el('b', null, val)); return d; };
-      sum.append(box(recGenre === 'revenu' ? 'Revenus par mois' : 'Coût par mois', (active.some(f => f.periode !== 'mois') ? '≈ ' : '') + eur.format(m)),
-                 box('Par an', '≈ ' + eur.format(m * 12)));
+      sum.append(box((recGenre === 'revenu' ? 'Versé en ' : 'Prélevé en ') + mName, eur.format(inMonth)),
+                 box('Sur les 12 prochains mois', eur.format(inYear)));
       const next = active.find(f => f._next);
       if (next) { const l = el('div', 'nextl'); l.append(document.createTextNode((recGenre === 'revenu' ? 'Prochain versement : ' : 'Prochain prélèvement : ')), el('b', null, next.libelle + ', ' + whenTxt(next._next) + ' (' + eur.format(next.montant) + ')')); sum.append(l); }
     }
@@ -1668,7 +1684,10 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
       const sm = el('small', null, line); nm.append(sm);
       if (f._next && inDays(f._next) <= 3 && !isOver(f)) { const t = el('span', 'tag soon', inDays(f._next) === 0 ? "aujourd'hui" : 'bientôt'); nm.append(t); }
       const right = el('span', 'amtcol'); right.append(el('span', 'amt', eur.format(f.montant)));
-      if (f.periode !== 'mois' && f.genre !== 'fixe') right.append(el('small', null, '≈ ' + eur.format(perMonth(f)) + '/mois'));
+      if (!isOver(f) && f.periode !== 'mois') {
+        const mk = key(cur), n = occsBetween(f, mk + '-01', monthEnd(mk)).length;
+        right.append(el('small', null, n === 0 ? 'pas en ' + monthName(cur).split(' ')[0] : n + ' fois en ' + monthName(cur).split(' ')[0]));
+      }
       b.append(dot, nm, right); b.onclick = () => openRec(f); list.append(b);
     };
     const list = $('rec-list'); list.textContent = '';
