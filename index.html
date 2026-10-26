@@ -339,6 +339,75 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 @media (prefers-color-scheme: dark){.tag.ab{background:#33264a;color:#d4b8f2}}
 .hint{font-size:.8rem;color:var(--muted)}
 .hint:empty{display:none}
+/* ---------- Étape 3 : budget ---------- */
+.page-in{display:grid;gap:18px}
+.page-in[hidden]{display:none!important}
+.seg.two{grid-template-columns:1fr 1fr}
+.twobtn{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.twobtn .bigbtn{padding:12px 10px;font-size:.9rem}
+@media (max-width:360px){.twobtn{grid-template-columns:1fr}}
+.alert.ok .ic{background:var(--accent-soft);color:var(--accent)}
+.amt.pos{color:var(--accent)}
+.row.in.done .lib,.row.in.done .amt{text-decoration:none}
+.hero-big{white-space:nowrap}
+.hero-big.sm{font-size:clamp(1.6rem,7.4vw,2.2rem)} .hero-big.xs{font-size:clamp(1.3rem,6vw,1.8rem)}
+.env-sub.nb{color:var(--warm);font-weight:700}
+.row.in.done .amt.pos{color:var(--muted)}
+.cat-h h3{margin:0;font-family:var(--f-display);font-weight:700;font-size:.98rem;display:flex;align-items:center;gap:8px}
+.gsec{display:grid;gap:14px}
+.grp-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:6px 4px -4px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+.grp-h h2{margin:0;font-family:var(--f-display);font-weight:700;font-size:1.12rem;display:flex;align-items:center;gap:8px}
+.grp-h .n{font-family:var(--f-num);font-size:.85rem;color:var(--muted);white-space:nowrap}
+.dot{display:inline-block}
+/* enveloppes */
+.envs{display:grid;gap:8px}
+.env{display:grid;gap:8px;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:12px 14px}
+.env-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.env-nm{display:flex;align-items:center;gap:8px;font-weight:700;min-width:0}
+.env-num{font-family:var(--f-num);font-size:.85rem;white-space:nowrap;color:var(--muted)}
+.env-bar{height:10px;border-radius:5px;background:var(--surface2);border:1px solid var(--line);overflow:hidden;display:flex}
+.env-bar i{display:block;height:100%}
+.env-bar .paid{background:#3fbf8f}
+.env-bar .paid.l1{background:#e7b93a} .env-bar .paid.l2{background:#f08a3c} .env-bar .paid.l3{background:var(--danger)}
+.env-bar .plan{background:repeating-linear-gradient(135deg,var(--box) 0 3px,transparent 3px 6px)}
+.env-sub{font-size:.8rem;color:var(--muted)}
+.env-sub.l2{color:var(--warm);font-weight:700} .env-sub.l3{color:var(--danger);font-weight:700}
+/* choix ＋ */
+.addchoice{display:grid;gap:10px}
+.addchoice button{display:flex;align-items:center;gap:14px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:16px;padding:16px;text-align:left}
+.addchoice b{display:block;font-size:1.02rem}
+.addchoice small{color:var(--muted);font-size:.85rem}
+.addchoice .ic{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:1.5rem;font-weight:700;flex:none}
+.addchoice .ic.dep{background:var(--danger-soft);color:var(--danger)}
+.addchoice .ic.ent{background:var(--accent-soft);color:var(--accent)}
+/* répartition */
+.repin{display:flex;justify-content:space-between;align-items:baseline;gap:10px;background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:12px}
+.repin b.num{font-family:var(--f-num);font-size:1.15rem}
+.reprow{display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px solid var(--line)}
+.reprow:first-child{border-top:0}
+.reprow .nm{flex:1;min-width:0}
+.repname{display:flex;align-items:center;gap:8px;font-weight:700}
+.repsub{display:block;font-size:.76rem;color:var(--muted);margin-top:2px}
+.repright{display:grid;justify-items:end;gap:2px;flex:none;width:128px}
+.amtwrap.rep{width:100%}
+.amtwrap.rep .inp{font-family:var(--f-num);font-weight:700;padding:9px 34px 9px 10px;text-align:right;background:var(--surface)}
+.amtwrap.rep::after{font-size:.95rem;right:11px}
+.repeq{font-size:.74rem;color:var(--muted);font-family:var(--f-num);min-height:1em}
+.repleft{display:flex;justify-content:space-between;align-items:baseline;margin:12px 2px;font-weight:700}
+.repleft b{font-family:var(--f-num)}
+.repleft.bad{color:var(--danger)} .repleft.ok{color:var(--accent)}
+.repquick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.repquick:empty{display:none}
+#v-rep .switch span:first-child{font-size:.92rem}
+/* catégories */
+.grplist{display:grid;gap:12px}
+.grpcard{background:var(--surface2)}
+.grphead .nm{font-size:1rem}
+.crow.btn.sub{padding-left:30px}
+.crow.btn.sub .nm{font-weight:400}
+.crow.btn.static::after{display:none}
+.crow.btn:disabled{opacity:1;cursor:default}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
@@ -401,13 +470,26 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
         </div>
         <button class="budgetbtn" id="budgetbtn" type="button"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg><span id="budgetlbl">Fixer un budget</span></button>
         <div class="stats">
-          <div class="stat"><b id="st1">0,00 €</b><span>Dépenses listées</span></div>
-          <div class="stat"><b id="st2">0,00 €</b><span>Non cochées</span></div>
+          <div class="stat" id="st1w"><b id="st1">0,00 €</b><span id="st1l">Dépenses listées</span></div>
+          <div class="stat" id="st2w"><b id="st2">0,00 €</b><span id="st2l">Non cochées</span></div>
           <div class="stat" id="st3w"><b id="st3">0 / 0</b><span id="st3l">Cochées</span></div>
         </div>
       </div>
     </section>
     <div class="alerts" id="alerts"></div>
+
+    <div id="env-w" hidden>
+      <div class="sect-h"><h2>Mes enveloppes</h2><button class="linkish" id="env-edit" type="button">Modifier la répartition</button></div>
+      <div class="envs" id="envs"></div>
+    </div>
+
+    <div class="sect-h"><h2>Entrées du mois</h2><small id="ent-tot"></small></div>
+    <div class="list" id="ent-list"></div>
+    <div class="twobtn">
+      <button class="bigbtn" id="ent-add" type="button"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Ajouter une entrée</button>
+      <button class="bigbtn" id="rep-open" type="button"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg>Répartir mon budget</button>
+    </div>
+
     <div class="methods" id="methods" aria-label="Payé par moyen de paiement"></div>
     <div class="sect-h"><h2>Prochaines échéances</h2><small>7 prochains jours</small></div>
     <div class="list" id="upcoming"></div>
@@ -416,14 +498,25 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 
   <!-- DÉPENSES -->
   <section class="page" id="p-depenses" aria-label="Dépenses" hidden>
-    <div class="filterbar" id="verifbar" hidden><span>Dates à vérifier</span><button type="button" id="verif-off">✕ Retirer le filtre</button></div>
-    <div class="seg" role="group" aria-label="Filtrer">
-      <button type="button" data-f="all" aria-pressed="true">Toutes<em id="n-all">0</em></button>
-      <button type="button" data-f="todo" aria-pressed="false">À payer<em id="n-todo">0</em></button>
-      <button type="button" data-f="done" aria-pressed="false">Payées<em id="n-done">0</em></button>
+    <div class="seg two" id="kind-seg" role="group" aria-label="Afficher">
+      <button type="button" data-k="dep" aria-pressed="true">Dépenses</button>
+      <button type="button" data-k="ent" aria-pressed="false">Entrées</button>
     </div>
-    <div class="cats" id="cats"><div class="empty">Chargement de vos dépenses…</div></div>
-    <div class="foot"><button class="ghost" id="copy" type="button">Reprendre les prévisions du mois précédent</button></div>
+    <div class="filterbar" id="fbar" hidden><span id="fbar-t"></span><button type="button" id="fbar-off">✕ Retirer le filtre</button></div>
+    <div id="dep-w" class="page-in">
+      <div class="seg" id="dep-seg" role="group" aria-label="Filtrer">
+        <button type="button" data-f="all" aria-pressed="true">Toutes<em id="n-all">0</em></button>
+        <button type="button" data-f="todo" aria-pressed="false">À payer<em id="n-todo">0</em></button>
+        <button type="button" data-f="done" aria-pressed="false">Payées<em id="n-done">0</em></button>
+      </div>
+      <div class="cats" id="cats"><div class="empty">Chargement de vos dépenses…</div></div>
+      <div class="foot"><button class="ghost" id="copy" type="button">Reprendre les prévisions du mois précédent</button></div>
+    </div>
+    <div id="ent-w" class="page-in" hidden>
+      <div class="recsum" id="ent-sum"></div>
+      <div class="list" id="ent-full"></div>
+      <div class="actions"><button type="button" class="primary" id="ent-add2">+ Ajouter une entrée</button></div>
+    </div>
   </section>
 
   <!-- RÉCURRENTS -->
@@ -449,7 +542,9 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     <div>
       <h4 class="sect-h" style="margin:0 4px 10px"><span>Paramétrer mon compte</span></h4>
       <div class="menu">
+        <button type="button" data-open="v-groups">Mes catégories et enveloppes<small id="n-grps"></small></button>
         <button type="button" data-open="v-cards">Mes cartes bancaires<small id="n-cards"></small></button>
+        <button type="button" data-open="v-srcs">Mes sources de revenus<small id="n-srcs"></small></button>
         <button type="button" data-open="v-cur">Ma monnaie<small id="n-cur"></small></button>
         <button type="button" data-open="v-pass">Changer mon mot de passe</button>
         <button type="button" data-open="v-mail">Changer d'adresse e-mail</button>
@@ -505,7 +600,10 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     <div class="field" id="ef-amt"><label for="e-amt">Montant</label><div class="amtwrap" data-sym="€"><input class="inp big" id="e-amt" inputmode="decimal" placeholder="0,00"></div></div>
     <div class="field" id="ef-date"><label for="e-date" id="e-date-l">Date prévue</label><input class="inp datein" id="e-date" type="date"></div>
     <div class="field" id="ef-cat"><span class="flbl">Catégorie</span><div class="chips" id="e-cats"></div>
-      <div class="newcat" id="e-newcat-w" hidden><input class="inp" id="e-newcat" maxlength="30" placeholder="Ex. Location, Cadeaux, Enfants…" aria-label="Nom de la nouvelle catégorie"><button type="button" class="ghost" id="e-newcat-ok">Ajouter</button></div>
+      <div id="e-newcat-w" hidden>
+        <div class="newcat"><input class="inp" id="e-newcat" maxlength="30" placeholder="Ex. Location, Cadeaux, Enfants…" aria-label="Nom de la nouvelle catégorie"><button type="button" class="ghost" id="e-newcat-ok">Ajouter</button></div>
+        <div class="selwrap" style="margin-top:8px"><select class="inp" id="e-newcat-g" aria-label="Grande catégorie de la nouvelle catégorie"></select></div>
+      </div>
     </div>
     <div class="field" id="ef-meth"><label for="e-meth">Payé avec</label>
       <div class="selwrap"><select class="inp" id="e-meth"></select></div>
@@ -522,6 +620,105 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
       <button type="submit" class="primary" id="e-save">Ajouter</button>
     </div>
   </form>
+
+  <!-- Choix : dépense ou entrée -->
+  <div class="view" id="v-add" hidden>
+    <div class="addchoice">
+      <button type="button" id="add-dep"><span class="ic dep">−</span><span><b>Une dépense</b><small>Courses, facture, achat…</small></span></button>
+      <button type="button" id="add-ent"><span class="ic ent">+</span><span><b>Une entrée d'argent</b><small>Salaire, remboursement, vente…</small></span></button>
+    </div>
+  </div>
+
+  <!-- Entrée d'argent -->
+  <form class="view" id="v-ent" autocomplete="off" novalidate hidden>
+    <div class="field" id="nf-src"><label for="n-src">Source</label><div class="selwrap"><select class="inp" id="n-src"></select></div>
+      <div class="newcat" id="n-newsrc-w" hidden><input class="inp" id="n-newsrc" maxlength="40" placeholder="Ex. Bourse, Freelance, Remboursement…" aria-label="Nom de la nouvelle source"><button type="button" class="ghost" id="n-newsrc-ok">Ajouter</button></div>
+    </div>
+    <div class="field" id="nf-amt"><label for="n-amt">Montant</label><div class="amtwrap" data-sym="€"><input class="inp big" id="n-amt" inputmode="decimal" placeholder="0,00"></div></div>
+    <div class="field" id="nf-date"><label for="n-date" id="n-date-l">Date prévue</label><input class="inp datein" id="n-date" type="date"></div>
+    <div class="field"><label for="n-lib">Précision (facultatif)</label><input class="inp" id="n-lib" maxlength="80" placeholder="Ex. Salaire d'octobre, remboursement Léa…"></div>
+    <button type="button" class="switch" id="n-recue" role="switch" aria-checked="false"><span>Déjà reçue</span><span class="tg"></span></button>
+    <div class="err" id="n-err" role="alert"></div>
+    <div class="actions">
+      <button type="button" class="danger" id="n-del" hidden>Supprimer</button>
+      <button type="submit" class="primary" id="n-save">Ajouter</button>
+    </div>
+  </form>
+
+  <!-- Répartir mon budget -->
+  <div class="view" id="v-rep" hidden>
+    <div class="repin"><span>Entrées de <b id="rep-month"></b></span><b class="num" id="rep-e"></b></div>
+    <p class="note" id="rep-noent" hidden>Ajoutez d'abord les entrées d'argent du mois (salaire, etc.) : le budget réparti ne peut pas dépasser vos entrées.</p>
+    <div class="chips" id="rep-mode" role="group" aria-label="Saisie" style="margin-bottom:12px">
+      <button type="button" class="chip" data-m="montant" aria-pressed="true">En montants</button>
+      <button type="button" class="chip" data-m="pct" aria-pressed="false">En pourcentages</button>
+    </div>
+    <div class="menu" id="rep-rows"></div>
+    <div class="repleft" id="rep-left"></div>
+    <div class="repquick" id="rep-quick"></div>
+    <button type="button" class="switch" id="rep-model" role="switch" aria-checked="false"><span>Utiliser cette répartition pour les prochains mois</span><span class="tg"></span></button>
+    <div class="err" id="rep-err" role="alert"></div>
+    <div class="actions">
+      <button type="button" class="danger" id="rep-del" hidden>Effacer</button>
+      <button type="button" class="primary" id="rep-save">Enregistrer</button>
+    </div>
+  </div>
+
+  <!-- Clôturer le mois -->
+  <div class="view" id="v-clo" hidden>
+    <p class="note" id="clo-txt"></p>
+    <div class="field"><label for="clo-amt">Montant versé dans Économies</label><div class="amtwrap" data-sym="€"><input class="inp big" id="clo-amt" inputmode="decimal"></div></div>
+    <p class="note">Il est ajouté comme dépense payée « Reste du mois » dans l'enveloppe Économies, au dernier jour du mois. Le mois est alors soldé.</p>
+    <div class="err" id="clo-err" role="alert"></div>
+    <div class="actions">
+      <button type="button" class="ghost" id="clo-skip" style="flex:1">Ne rien verser</button>
+      <button type="button" class="primary" id="clo-ok">Verser dans Économies</button>
+    </div>
+  </div>
+
+  <!-- Mes catégories et enveloppes -->
+  <div class="view" id="v-groups" hidden>
+    <p class="note">Chaque catégorie appartient à une grande catégorie (une enveloppe). Touchez un élément pour le renommer, changer sa couleur ou le déplacer.</p>
+    <div id="grp-list" class="grplist"></div>
+    <div class="twobtn" style="margin-top:14px">
+      <button class="bigbtn" type="button" id="grp-new">+ Grande catégorie</button>
+      <button class="bigbtn" type="button" id="cat-new">+ Catégorie</button>
+    </div>
+  </div>
+
+  <!-- Grande catégorie -->
+  <div class="view" id="v-grp" hidden>
+    <div class="field" id="gf-name"><label for="g-name">Nom</label><input class="inp" id="g-name" maxlength="40" placeholder="Ex. Dépenses générales, Plaisir…"></div>
+    <div class="field"><span class="flbl">Couleur</span><div class="swatches" id="g-colors"></div></div>
+    <p class="note" id="g-note"></p>
+    <div class="err" id="g-err" role="alert"></div>
+    <div class="actions">
+      <button type="button" class="danger" id="g-del" hidden>Supprimer</button>
+      <button type="button" class="primary" id="g-save">Enregistrer</button>
+    </div>
+  </div>
+
+  <!-- Catégorie -->
+  <div class="view" id="v-cat" hidden>
+    <div class="field" id="kf-name"><label for="k-name">Nom</label><input class="inp" id="k-name" maxlength="30" placeholder="Ex. Vêtements, Location…"></div>
+    <div class="field"><label for="k-grp">Grande catégorie</label><div class="selwrap"><select class="inp" id="k-grp"></select></div></div>
+    <div class="field"><span class="flbl">Couleur</span><div class="swatches" id="k-colors"></div></div>
+    <p class="note" id="k-note"></p>
+    <div class="err" id="k-err" role="alert"></div>
+    <div class="actions">
+      <button type="button" class="danger" id="k-del" hidden>Supprimer</button>
+      <button type="button" class="primary" id="k-save">Enregistrer</button>
+    </div>
+  </div>
+
+  <!-- Sources de revenus -->
+  <div class="view" id="v-srcs" hidden>
+    <p class="note">Les sources servent à classer vos entrées d'argent.</p>
+    <div class="menu" id="src-list"></div>
+    <h4>Ajouter une source</h4>
+    <div class="newcat" style="margin-top:0"><input class="inp" id="src-name" maxlength="40" placeholder="Ex. Bourse, Freelance…" aria-label="Nom de la source"><button type="button" class="ghost" id="src-add">Ajouter</button></div>
+    <div class="err" id="src-err" role="alert" style="margin-top:10px"></div>
+  </div>
 
   <!-- Marquer comme payée -->
   <div class="view" id="v-pay" hidden>
@@ -731,8 +928,9 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 
   /* ---------- état ---------- */
   let user = null, all = [], budgets = {}, cartes = [], fixes = [], cats = [], srcs = [], loaded = false, v3 = true;
+  let groupes = [], entrees = [], reps = {}, clos = {};
   const applied = new Set();
-  let filter = store.get('carnet-filtre') || 'all', verifOnly = false;
+  let filter = store.get('carnet-filtre') || 'all';
   let tab = 'mois';
   const now = new Date();
   let cur = { y: now.getFullYear(), m: now.getMonth() };
@@ -752,18 +950,24 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     montant: Number(r.montant) || 0, type: r.type === 'imprevue' ? 'imprevue' : 'prevue', moyen: r.moyen || '', payee: !!r.payee, cree: r.cree, fixe_id: r.fixe_id || null });
   const byDate = (a, b) => (a.date || '9999') < (b.date || '9999') ? -1 : (a.date || '9999') > (b.date || '9999') ? 1 : 0;
   const cacheKey = () => 'carnet-cache-' + (user ? user.id : '');
-  const saveCache = () => store.set(cacheKey(), { all, budgets, cartes, fixes, cats, srcs });
+  const saveCache = () => store.set(cacheKey(), { all, budgets, cartes, fixes, cats, srcs, groupes, entrees, reps, clos });
   const setSync = ok => { $('sync').classList.toggle('off', !ok); $('sync').title = ok ? 'Synchronisé' : 'Hors ligne : données du dernier chargement'; };
   const fail = (msg, error) => { console.error(error); setSync(navigator.onLine); toast(navigator.onLine ? msg : 'Hors ligne : modification non enregistrée. Réessayez une fois connectée.'); };
 
+  const normGrp = x => ({ id: x.id, nom: x.nom, couleur: x.couleur || '', ordre: x.ordre || 0, role: x.role || null,
+    modele_montant: x.modele_montant != null ? Number(x.modele_montant) : null, modele_pct: x.modele_pct != null ? Number(x.modele_pct) : null });
   async function load(){
-    const [d, b, c, f, k, so] = await Promise.all([
+    const [d, b, c, f, k, so, gr, en, rp, cl] = await Promise.all([
       sb.from('depenses').select('*').order('date', { ascending: true, nullsFirst: true }),
       sb.from('budgets').select('mois,montant'),
       sb.from('cartes').select('*').order('cree', { ascending: true }),
       sb.from('fixes').select('*').order('cree', { ascending: true }),
       sb.from('categories').select('*').order('ordre', { ascending: true }),
-      sb.from('sources').select('nom').order('cree', { ascending: true })
+      sb.from('sources').select('nom').order('cree', { ascending: true }),
+      sb.from('groupes').select('*').order('ordre', { ascending: true }),
+      sb.from('entrees').select('*').order('date', { ascending: true, nullsFirst: true }),
+      sb.from('repartitions').select('mois,groupe_id,montant,pourcentage'),
+      sb.from('clotures').select('mois,montant')
     ]);
     if (d.error || b.error) { setSync(false); if (!loaded) toast('Impossible de charger vos données. Vérifiez votre connexion.'); return; }
     v3 = !k.error && !c.error && !f.error;
@@ -775,6 +979,10 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
       periode: x.periode || 'mois', date_debut: x.date_debut || (x.debut ? x.debut + '-01' : null), debut: x.debut || (x.date_debut || '').slice(0, 7),
       jour: x.jour || null, fin: x.fin || null, source: x.source || '' }));
     if (!so.error) srcs = so.data.map(x => x.nom);
+    if (!gr.error) groupes = gr.data.map(normGrp);
+    if (!en.error) entrees = en.data.map(normEnt);
+    if (!rp.error) { reps = {}; rp.data.forEach(r => { (reps[r.mois] = reps[r.mois] || {})[r.groupe_id] = { montant: Number(r.montant) || 0, pct: r.pourcentage != null ? Number(r.pourcentage) : null }; }); }
+    if (!cl.error) { clos = {}; cl.data.forEach(r => clos[r.mois] = Number(r.montant) || 0); }
     if (v3) {
       cats = k.data.map(x => ({ id: x.id, nom: x.nom, couleur: x.couleur || '', groupe_id: x.groupe_id || null }));
       if (!cats.length && !load.initDone) { load.initDone = true; const r = await sb.rpc('initialiser_compte'); if (!r.error) return load(); }
@@ -815,51 +1023,127 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     if (tab === 'compte') renderCompte();
   }
 
+  /* ---------- budget : calculs ---------- */
+  const r2 = v => Math.round(v * 100) / 100;
+  const normEnt = r => ({ id: r.id, mois: r.mois, date: r.date || null, source: r.source || 'Autre', libelle: r.libelle || '', montant: Number(r.montant) || 0, recue: !!r.recue, fixe_id: r.fixe_id || null, verif: !!r.date_a_verifier });
+  const grpOfCat = name => { const c = cats.find(x => x.nom === name); return c ? c.groupe_id : null; };
+  const grpById = id => groupes.find(g => g.id === id);
+  const hasModel = () => groupes.some(g => g.modele_montant != null || g.modele_pct != null);
+  const lvlOf = pct => pct > 1 ? 3 : pct >= .9 ? 2 : pct >= .7 ? 1 : 0;
+  // Répartition du mois : celle du mois si elle existe, sinon le modèle
+  function alloc(k){
+    const ent = entrees.filter(e => e.mois === k);
+    const E = r2(ent.reduce((s, e) => s + e.montant, 0));
+    const r = reps[k] || {};
+    let src = null; const rows = {};
+    if (Object.keys(r).length) { src = 'mois'; groupes.forEach(g => { if (r[g.id]) rows[g.id] = r[g.id]; }); }
+    else if (hasModel()) { src = 'modele'; groupes.forEach(g => { if (g.modele_montant != null || g.modele_pct != null) rows[g.id] = { montant: Number(g.modele_montant) || 0, pct: g.modele_pct != null ? Number(g.modele_pct) : null }; }); }
+    const eff = {}; let R = 0;
+    Object.entries(rows).forEach(([gid, x]) => { const v = x.pct != null ? r2(E * x.pct / 100) : Number(x.montant) || 0; eff[gid] = v; R += v; });
+    return { E, ent, src, rows, eff, R: r2(R) };
+  }
+  function envelopes(k, a){
+    const items = all.filter(d => d.mois === k);
+    const list = groupes.map(g => ({ g, alloue: a.eff[g.id] || 0, paye: 0, prevu: 0 }));
+    const nc = { g: { id: 'nc', nom: 'Non classées', couleur: '#7a8783' }, alloue: 0, paye: 0, prevu: 0 };
+    items.forEach(d => { const gid = grpOfCat(d.categorie); const e = list.find(x => x.g.id === gid) || nc; if (d.payee) e.paye += d.montant; else e.prevu += d.montant; });
+    if (nc.paye || nc.prevu) list.push(nc);
+    return list.filter(e => e.alloue || e.paye || e.prevu);
+  }
+  function closable(){
+    const p = key(shift(monthOfKey(nowKey()), -1));
+    if (!v3 || (p in clos) || store.get('carnet-clo-skip-' + (user ? user.id : '') + '-' + p)) return null;
+    const a = alloc(p); if (!a.E) return null;
+    const paid = all.filter(d => d.mois === p && d.payee).reduce((s, d) => s + d.montant, 0);
+    return { k: p, E: a.E, paid: r2(paid), reste: Math.max(0, r2(a.E - paid)) };
+  }
+
+  /* ---------- Mon mois ---------- */
   function renderMois(k){
     const items = all.filter(d => d.mois === k);
-    const total = items.reduce((s,d)=>s+d.montant,0);
+    const total = r2(items.reduce((s,d)=>s+d.montant,0));
     const paidItems = items.filter(d=>d.payee);
-    const paid = paidItems.reduce((s,d)=>s+d.montant,0);
+    const paid = r2(paidItems.reduce((s,d)=>s+d.montant,0));
+    const a = alloc(k), envMode = !!a.src && a.R > 0;
     const budget = (k in budgets) ? budgets[k] : null;
-    const ref = budget !== null ? budget : total;
+    const ref = envMode ? a.R : budget !== null ? budget : total;
     const rest = ref - paid;
 
-    $('h-lbl').textContent = budget !== null ? 'Reste sur le budget' : 'Reste à payer';
-    $('h-big').textContent = eur.format(rest);
-    $('h-big').classList.toggle('neg', rest < 0);
+    $('h-lbl').textContent = envMode ? 'Reste à dépenser' : budget !== null ? 'Reste sur le budget' : 'Reste à payer';
+    const hb = $('h-big'), hbt = eur.format(rest);
+    hb.textContent = hbt; hb.classList.toggle('neg', rest < 0);
+    hb.classList.toggle('sm', hbt.length > 10 && hbt.length <= 13); hb.classList.toggle('xs', hbt.length > 13);
     const hs = $('h-sub'); hs.textContent = '';
-    if (items.length || budget !== null) hs.append(el('b', null, eur.format(paid)), document.createTextNode(' payés sur '), el('b', null, eur.format(ref)));
+    if (items.length || ref) hs.append(el('b', null, eur.format(paid)), document.createTextNode(envMode ? ' dépensés sur ' : ' payés sur '), el('b', null, eur.format(ref)), document.createTextNode(envMode ? ' répartis' : ''));
     else hs.textContent = 'Aucune dépense ce mois-ci';
-    const pct = ref > 0 ? paid/ref : 0;
-    const lvl = pct > 1 ? 3 : pct >= .9 ? 2 : pct >= .7 ? 1 : 0;
+    const pct = ref > 0 ? paid/ref : 0, lvl = lvlOf(pct);
     const ring = $('ring');
     ring.setAttribute('stroke-dashoffset', String(CIRC * (1 - Math.min(pct,1))));
     ring.setAttribute('class', 'val' + (lvl ? ' l' + lvl : ''));
     $('ring-pct').textContent = Math.round(pct*100) + ' %';
     const ha = $('h-alert'); ha.className = 'hero-alert' + (lvl >= 2 ? ' l' + lvl : '');
     ha.textContent = lvl === 3 ? 'Dépassé de ' + eur.format(paid - ref) : lvl === 2 ? 'Presque atteint' : '';
-    $('budgetlbl').textContent = budget !== null ? 'Budget : ' + eur.format(budget) : 'Fixer un budget';
-    $('st1').textContent = eur.format(total);
-    $('st2').textContent = eur.format(total - paid);
-    if (budget !== null) {
-      const diff = budget - total;
-      $('st3').textContent = eur.format(Math.abs(diff));
-      $('st3l').textContent = diff >= 0 ? 'Marge du budget' : 'Au-delà du budget';
-      $('st3w').classList.toggle('bad', diff < 0);
+    $('budgetlbl').textContent = envMode ? (a.src === 'modele' ? 'Répartition (modèle) : ' : 'Répartition : ') + eur.format(a.R) : budget !== null ? 'Budget : ' + eur.format(budget) : 'Fixer un budget';
+    const stat = (n, val, lbl, bad) => { $('st' + n).textContent = val; $('st' + n + 'l').textContent = lbl; $('st' + n + 'w').classList.toggle('bad', !!bad); };
+    if (envMode) {
+      stat(1, eur.format(a.E), 'Entrées du mois');
+      stat(2, eur.format(total - paid), 'Non cochées');
+      const left = r2(a.E - a.R);
+      stat(3, eur.format(Math.abs(left)), left >= 0 ? 'Reste à répartir' : 'Réparti en trop', left < 0);
     } else {
-      $('st3').textContent = paidItems.length + ' / ' + items.length;
-      $('st3l').textContent = 'Cochées'; $('st3w').classList.remove('bad');
+      stat(1, eur.format(total), 'Dépenses listées');
+      stat(2, eur.format(total - paid), 'Non cochées');
+      if (budget !== null) { const diff = budget - total; stat(3, eur.format(Math.abs(diff)), diff >= 0 ? 'Marge du budget' : 'Au-delà du budget', diff < 0); }
+      else stat(3, paidItems.length + ' / ' + items.length, 'Cochées');
     }
 
     // alertes
     const al = $('alerts'); al.textContent = '';
     const today = todayIso();
+    const alertBtn = (cls, ic, html, fn) => { const b = el('button', 'alert ' + cls); b.type = 'button'; b.append(el('span', 'ic', ic)); const t = el('span'); t.innerHTML = html; b.append(t); b.onclick = fn; al.append(b); };
+    const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+    const clo = closable();
+    if (clo) alertBtn('ok', '✓', '<b>Clôturer ' + esc(monthName(monthOfKey(clo.k))) + '</b> : ' + esc(eur.format(clo.reste)) + ' restants à verser dans Économies', () => openClo(clo));
+    if (envMode) {
+      envelopes(k, a).forEach(e => { if (e.alloue > 0 && e.paye > e.alloue) alertBtn('bad', '!', '<b>' + esc(e.g.nom) + '</b> : dépassé de ' + esc(eur.format(e.paye - e.alloue)) + '. Ajuster la répartition', () => openRep()); });
+      if (a.src === 'mois' && a.R > a.E + 0.005) alertBtn('bad', '!', '<b>' + esc(eur.format(a.R - a.E)) + ' répartis en trop</b> par rapport à vos entrées', () => openRep());
+    }
     const late = all.filter(d => !d.payee && d.date && d.date < today);
-    const verif = all.filter(d => d.verif);
-    const alertBtn = (cls, ic, txt, fn) => { const b = el('button', 'alert ' + cls); b.type = 'button'; b.append(el('span', 'ic', ic)); const t = el('span'); t.innerHTML = txt; b.append(t); b.onclick = fn; al.append(b); };
     if (late.length) alertBtn('bad', '!', '<b>' + late.length + (late.length > 1 ? ' dépenses prévues sont en retard' : ' dépense prévue est en retard') + '</b>', () => {
-      const first = late.slice().sort(byDate)[0]; cur = monthOfKey(first.mois); filter = 'todo'; verifOnly = false; setTab('depenses'); });
-    if (verif.length) alertBtn('warn', '?', '<b>' + verif.length + (verif.length > 1 ? ' dates à vérifier' : ' date à vérifier') + '</b> sur des dépenses saisies avant l’ajout des dates', () => { verifOnly = true; setTab('depenses'); });
+      const first = late.slice().sort(byDate)[0]; cur = monthOfKey(first.mois); filter = 'todo'; listFilter = null; kind = 'dep'; setTab('depenses'); });
+    const verif = all.filter(d => d.verif);
+    if (verif.length) alertBtn('warn', '?', '<b>' + verif.length + (verif.length > 1 ? ' dates à vérifier' : ' date à vérifier') + '</b> sur des dépenses saisies avant l’ajout des dates', () => { listFilter = { type: 'verif' }; kind = 'dep'; setTab('depenses'); });
+
+    // enveloppes
+    const envs = $('envs'); envs.textContent = '';
+    $('env-w').hidden = !envMode;
+    if (envMode) envelopes(k, a).forEach(e => {
+      const b = el('button', 'env'); b.type = 'button';
+      const top = el('div', 'env-top'); const nm = el('span', 'env-nm'); const dot = el('i', 'dot'); dot.style.background = e.g.couleur || '#7a8783'; nm.append(dot, document.createTextNode(e.g.nom));
+      top.append(nm, el('span', 'env-num', eur.format(e.paye) + (e.alloue ? ' / ' + eur.format(e.alloue) : '')));
+      const p = e.alloue > 0 ? e.paye / e.alloue : 0, lv = e.alloue > 0 ? lvlOf(p) : (e.paye > 0 ? 1 : 0);
+      const bar = el('div', 'env-bar'); const f1 = el('i', 'paid l' + lv); const f2 = el('i', 'plan');
+      const base = Math.max(e.alloue, e.paye + e.prevu) || 1;
+      f1.style.width = Math.min(100, e.paye / base * 100) + '%'; f2.style.width = Math.min(100 - Math.min(100, e.paye / base * 100), e.prevu / base * 100) + '%';
+      bar.append(f1, f2);
+      let txt;
+      if (!e.alloue) txt = 'Non budgété' + (e.prevu ? ' · ' + eur.format(e.prevu) + ' prévus' : '');
+      else if (e.paye > e.alloue) txt = 'Dépassé de ' + eur.format(e.paye - e.alloue);
+      else txt = 'Reste ' + eur.format(e.alloue - e.paye) + (e.prevu ? ' · dont ' + eur.format(Math.min(e.prevu, e.alloue - e.paye)) + ' déjà prévus' : '');
+      const sub = el('div', 'env-sub' + (!e.alloue ? ' nb' : lv >= 2 ? ' l' + lv : ''), txt);
+      b.append(top, bar, sub);
+      b.onclick = () => { listFilter = { type: 'grp', id: e.g.id, nom: e.g.nom }; kind = 'dep'; setTab('depenses'); };
+      envs.append(b);
+    });
+
+    // entrées du mois
+    const el2 = $('ent-list'); el2.textContent = '';
+    $('ent-tot').textContent = a.ent.length ? eur.format(a.E) + (a.ent.some(e => !e.recue) ? ' · ' + eur.format(r2(a.ent.filter(e => e.recue).reduce((s, e) => s + e.montant, 0))) + ' reçus' : '') : '';
+    if (!a.ent.length) { const r = el('div', 'crow'); const t = el('div', 'nm', v3 ? 'Aucune entrée ce mois-ci. Ajoutez votre salaire ou vos autres revenus pour répartir votre budget.' : 'Mettez d’abord à jour la base.'); t.style.fontWeight = '400'; t.style.color = 'var(--muted)'; r.append(t); el2.append(r); }
+    a.ent.slice().sort(byDate).forEach(e => el2.append(entRow(e)));
+    $('rep-open').textContent = '';
+    $('rep-open').append(...(() => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('viewBox', '0 0 24 24'); s.innerHTML = '<path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/>'; return [s]; })(),
+      document.createTextNode(a.src === 'mois' ? 'Modifier la répartition' : 'Répartir mon budget'));
 
     // cartes
     const per = {};
@@ -871,7 +1155,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     const up = $('upcoming'); up.textContent = '';
     const end = addDays(today, 7);
     const list = all.filter(d => !d.payee && d.date && d.date <= end).sort(byDate).slice(0, 8);
-    if (!list.length) { const r = el('div','crow'); r.append(el('div','nm','Rien à payer dans les 7 prochains jours.')); r.querySelector('.nm').style.fontWeight = '400'; r.querySelector('.nm').style.color = 'var(--muted)'; up.append(r); }
+    if (!list.length) { const r = el('div','crow'); const t = el('div','nm','Rien à payer dans les 7 prochains jours.'); t.style.fontWeight = '400'; t.style.color = 'var(--muted)'; r.append(t); up.append(r); }
     list.forEach(d => {
       const b = el('button', 'erow' + (d.date < today ? ' late' : '')); b.type = 'button';
       const day = el('span', 'eday'); const dd = dObj(d.date);
@@ -883,56 +1167,113 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     });
   }
 
+  function entRow(e){
+    const r = el('div', 'row' + (e.recue ? ' done in' : ' in'));
+    const cb = el('button', 'check'); cb.type = 'button'; cb.setAttribute('role', 'checkbox'); cb.setAttribute('aria-checked', e.recue);
+    cb.setAttribute('aria-label', 'Reçue : ' + (e.libelle || e.source));
+    cb.innerHTML = '<span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>';
+    cb.onclick = () => setRecue(e, !e.recue);
+    const main = el('button', 'rowmain'); main.type = 'button'; main.setAttribute('aria-label', 'Modifier ' + (e.libelle || e.source));
+    const txt = el('span', 'rowtxt'); txt.append(el('span', 'lib', e.libelle || e.source));
+    const meta = el('span', 'meta'); meta.append(el('span', null, (e.date ? fmtDay(e.date) : 'Sans date') + ' · ' + e.source));
+    meta.append(e.recue ? el('span', 'tag', 'reçue') : el('span', 'tag imp', 'attendue'));
+    if (e.fixe_id) meta.append(el('span', 'tag fx', 'récurrent'));
+    txt.append(meta);
+    main.append(txt, el('span', 'amt pos', '+' + eur.format(e.montant)));
+    main.onclick = () => openEnt(e);
+    r.append(cb, main); return r;
+  }
+  async function setRecue(e, v){
+    e.recue = v; render();
+    const { error } = await sb.from('entrees').update({ recue: v }).eq('id', e.id);
+    if (error) { e.recue = !v; render(); return fail("La case n'a pas été enregistrée.", error); }
+    saveCache();
+  }
+
+  /* ---------- Dépenses / Entrées ---------- */
+  let kind = 'dep', listFilter = null; // listFilter : { type: 'verif' } | { type: 'grp', id, nom }
   function renderDepenses(k){
-    const items = all.filter(d => verifOnly ? d.verif : d.mois === k);
+    document.querySelectorAll('#kind-seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === kind));
+    $('dep-w').hidden = kind !== 'dep'; $('ent-w').hidden = kind !== 'ent';
+    const fb = $('fbar');
+    fb.hidden = !(kind === 'dep' && listFilter);
+    if (listFilter) $('fbar-t').textContent = listFilter.type === 'verif' ? 'Dates à vérifier' : 'Enveloppe : ' + listFilter.nom;
+    if (kind === 'ent') return renderEntrees(k);
+    const verifOnly = listFilter && listFilter.type === 'verif';
+    let items = all.filter(d => verifOnly ? d.verif : d.mois === k);
+    if (listFilter && listFilter.type === 'grp') items = items.filter(d => (grpOfCat(d.categorie) || 'nc') === listFilter.id);
     const paidItems = items.filter(d=>d.payee);
-    $('verifbar').hidden = !verifOnly;
     $('n-all').textContent = items.length; $('n-todo').textContent = items.length - paidItems.length; $('n-done').textContent = paidItems.length;
-    document.querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.f === filter));
-    $('copy').hidden = verifOnly;
+    document.querySelectorAll('#dep-seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.f === filter));
+    $('copy').hidden = !!listFilter;
     const box = $('cats'); box.textContent = '';
     if (!loaded) { box.append(el('div','empty','Chargement de vos dépenses…')); return; }
     if (!items.length) {
       const e = el('div','empty');
       e.append(el('strong',null, verifOnly ? 'Toutes les dates sont vérifiées' : 'Rien pour ' + monthName(cur)),
-               el('span',null, verifOnly ? 'Vous pouvez retirer le filtre.' : 'Touchez ＋ pour noter une dépense, ou reprenez les prévisions du mois précédent.'));
+               el('span',null, listFilter ? 'Vous pouvez retirer le filtre.' : 'Touchez ＋ pour noter une dépense, ou reprenez les prévisions du mois précédent.'));
       box.append(e); return;
     }
     const shown = items.filter(d => filter==='all' || (filter==='todo' ? !d.payee : d.payee));
     if (!shown.length) { box.append(el('div','empty', filter==='todo' ? 'Tout est payé ce mois-ci.' : 'Aucune dépense cochée pour l’instant.')); return; }
-    const order = [...cats.map(c => c.nom), ...new Set(shown.map(d=>d.categorie))].filter((c, i, a) => a.indexOf(c) === i);
-    for (const c of order) {
-      const rows = shown.filter(d=>d.categorie===c);
-      if (!rows.length) continue;
-      rows.sort((a,b)=> (a.payee-b.payee) || byDate(a, b) || b.montant-a.montant);
-      const sec = el('section');
-      const h = el('div','cat-h'); const h2 = el('h2'); const dot = el('span','dot'); dot.style.background = catColor(c);
-      h2.append(dot, document.createTextNode(c));
-      h.append(h2, el('span','n', eur.format(rows.reduce((s,d)=>s+d.montant,0))));
-      const list = el('div','list');
-      for (const d of rows) {
-        const r = el('div','row' + (d.payee?' done':''));
-        const cb = el('button','check'); cb.type='button'; cb.setAttribute('role','checkbox'); cb.setAttribute('aria-checked', d.payee);
-        cb.setAttribute('aria-label','Payée : ' + d.libelle);
-        cb.innerHTML = '<span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>';
-        cb.addEventListener('click', ()=> d.payee ? setPaid(d, false) : openPay(d));
-        const main = el('button','rowmain'); main.type='button'; main.setAttribute('aria-label','Modifier ' + d.libelle);
-        const txt = el('span','rowtxt'); txt.append(el('span','lib', d.libelle));
-        const meta = el('span','meta');
-        meta.append(el('span', null, d.date ? fmtDay(d.date) : 'Sans date'));
-        const mm = el('span'); const md = el('i','mdot'); md.style.background = methodColor(d.moyen); mm.append(md, document.createTextNode(d.moyen || 'Moyen non précisé')); meta.append(mm);
-        meta.append(d.type==='imprevue' ? el('span','tag imp','imprévue') : el('span','tag','prévue'));
-        if (d.fixe_id) { const g = (fixes.find(f => f.id === d.fixe_id) || {}).genre; meta.append(g === 'abonnement' ? el('span','tag ab','abonnement') : el('span','tag fx','fixe')); }
-        if (d.verif) meta.append(el('span','tag verif','date à vérifier'));
-        txt.append(meta);
-        main.append(txt, el('span','amt', eur.format(d.montant)));
-        main.addEventListener('click', ()=> openExp(d));
-        r.append(cb, main); list.append(r);
+    const a = alloc(k);
+    const gList = [...groupes, { id: 'nc', nom: 'Non classées', couleur: '#7a8783' }];
+    const catOrder = [...cats.map(c => c.nom), ...new Set(shown.map(d=>d.categorie))].filter((c, i, arr) => arr.indexOf(c) === i);
+    for (const g of gList) {
+      const gRows = shown.filter(d => (grpOfCat(d.categorie) || 'nc') === g.id);
+      if (!gRows.length) continue;
+      const gsec = el('section', 'gsec');
+      if (groupes.length) {
+        const gh = el('div', 'grp-h'); const t = el('h2'); const dot = el('i', 'dot'); dot.style.background = g.couleur || '#7a8783'; t.append(dot, document.createTextNode(g.nom));
+        const spent = all.filter(d => d.mois === k && d.payee && (grpOfCat(d.categorie) || 'nc') === g.id).reduce((s, d) => s + d.montant, 0);
+        gh.append(t, el('span', 'n', a.eff[g.id] ? eur.format(spent) + ' / ' + eur.format(a.eff[g.id]) : eur.format(gRows.reduce((s, d) => s + d.montant, 0))));
+        gsec.append(gh);
       }
-      sec.append(h, list); box.append(sec);
+      for (const c of catOrder) {
+        const rows = gRows.filter(d=>d.categorie===c);
+        if (!rows.length) continue;
+        rows.sort((a,b)=> (a.payee-b.payee) || byDate(a, b) || b.montant-a.montant);
+        const sec = el('section');
+        const h = el('div','cat-h'); const h2 = el('h3'); const dot = el('span','dot'); dot.style.background = catColor(c);
+        h2.append(dot, document.createTextNode(c));
+        h.append(h2, el('span','n', eur.format(rows.reduce((s,d)=>s+d.montant,0))));
+        const list = el('div','list');
+        for (const d of rows) {
+          const r = el('div','row' + (d.payee?' done':''));
+          const cb = el('button','check'); cb.type='button'; cb.setAttribute('role','checkbox'); cb.setAttribute('aria-checked', d.payee);
+          cb.setAttribute('aria-label','Payée : ' + d.libelle);
+          cb.innerHTML = '<span class="box"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>';
+          cb.addEventListener('click', ()=> d.payee ? setPaid(d, false) : openPay(d));
+          const main = el('button','rowmain'); main.type='button'; main.setAttribute('aria-label','Modifier ' + d.libelle);
+          const txt = el('span','rowtxt'); txt.append(el('span','lib', d.libelle));
+          const meta = el('span','meta');
+          meta.append(el('span', null, d.date ? fmtDay(d.date) : 'Sans date'));
+          const mm = el('span'); const md = el('i','mdot'); md.style.background = methodColor(d.moyen); mm.append(md, document.createTextNode(d.moyen || 'Moyen non précisé')); meta.append(mm);
+          meta.append(d.type==='imprevue' ? el('span','tag imp','imprévue') : el('span','tag','prévue'));
+          if (d.fixe_id) { const gg = (fixes.find(f => f.id === d.fixe_id) || {}).genre; meta.append(gg === 'abonnement' ? el('span','tag ab','abonnement') : el('span','tag fx','fixe')); }
+          if (d.verif) meta.append(el('span','tag verif','date à vérifier'));
+          txt.append(meta);
+          main.append(txt, el('span','amt', eur.format(d.montant)));
+          main.addEventListener('click', ()=> openExp(d));
+          r.append(cb, main); list.append(r);
+        }
+        sec.append(h, list); gsec.append(sec);
+      }
+      box.append(gsec);
     }
   }
-  $('verif-off').onclick = () => { verifOnly = false; render(); };
+  function renderEntrees(k){
+    const a = alloc(k), sum = $('ent-sum'); sum.textContent = '';
+    const box = (lbl, val) => { const d = el('div'); d.append(el('span', null, lbl), el('b', null, val)); return d; };
+    const rec = r2(a.ent.filter(e => e.recue).reduce((s, e) => s + e.montant, 0));
+    sum.append(box('Entrées du mois', eur.format(a.E)), box('Déjà reçues', eur.format(rec)));
+    if (a.src) { const l = el('div', 'nextl'); l.append(document.createTextNode('Réparti : '), el('b', null, eur.format(a.R) + (a.R <= a.E ? ' · reste ' + eur.format(a.E - a.R) + ' à répartir' : ' · ' + eur.format(a.R - a.E) + ' de trop'))); sum.append(l); }
+    const list = $('ent-full'); list.textContent = '';
+    if (!a.ent.length) { const r = el('div', 'crow'); const t = el('div', 'nm', 'Aucune entrée en ' + monthName(cur) + '.'); t.style.fontWeight = '400'; t.style.color = 'var(--muted)'; r.append(t); list.append(r); }
+    a.ent.slice().sort(byDate).forEach(e => list.append(entRow(e)));
+  }
+  document.querySelectorAll('#kind-seg button').forEach(b => b.onclick = () => { kind = b.dataset.k; render(); });
+  $('fbar-off').onclick = () => { listFilter = null; render(); };
 
   async function setPaid(d, v, date){
     const before = { payee: d.payee, date: d.date, mois: d.mois, verif: d.verif };
@@ -946,7 +1287,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   }
 
   /* ---------- panneau ---------- */
-  const VIEWS = ['v-exp','v-pay','v-bud','v-rec','v-cards','v-cur','v-pass','v-mail','v-stats','v-del'];
+  const VIEWS = ['v-add','v-ent','v-rep','v-clo','v-groups','v-grp','v-cat','v-srcs','v-exp','v-pay','v-bud','v-rec','v-cards','v-cur','v-pass','v-mail','v-stats','v-del'];
   let editing = null, dirtyCheck = null;
   function openSheet(view, title, isDirty){
     VIEWS.forEach(v => $(v).hidden = v !== view);
@@ -997,7 +1338,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
       const dot = el('span','dot'); dot.style.background = catColor(c); b.append(dot, document.createTextNode(c));
       b.onclick = ()=>{ eCat = c; clearMissing('ef-cat'); paintChips(); }; cc.append(b); });
     const add = el('button','chip add','+ Nouvelle'); add.type='button'; add.setAttribute('aria-label','Créer une nouvelle catégorie');
-    add.onclick = ()=>{ $('e-newcat-w').hidden = false; $('e-newcat').value = ''; $('e-newcat').focus(); };
+    add.onclick = ()=>{ $('e-newcat-w').hidden = false; $('e-newcat').value = ''; fillGrpSelect($('e-newcat-g'), (groupes[0] || {}).id); $('e-newcat-g').options[$('e-newcat-g').options.length - 1].textContent = 'Non classée (à ranger plus tard)'; $('e-newcat').focus(); };
     cc.append(add);
     document.querySelectorAll('#e-type .chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.t===eType));
     $('e-paid').setAttribute('aria-checked', ePaid); dateLabel();
@@ -1005,19 +1346,19 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   document.querySelectorAll('#e-type .chip').forEach(b => b.onclick = ()=>{ eType = b.dataset.t; clearMissing('ef-type'); paintChips(); });
   $('e-paid').onclick = ()=>{ ePaid = !ePaid; paintChips(); };
 
-  async function createCat(name){
+  async function createCat(name, gid){
     const v = capFirst(name || '');
     if (!v) return null;
     const same = allCats().find(c => c.toLowerCase() === v.toLowerCase());
     if (same) return same;
     if (v3) {
-      const { data, error } = await sb.from('categories').insert({ user_id: user.id, nom: v, couleur: hashColor(v, CAT_EXTRA), ordre: 100 }).select().single();
+      const { data, error } = await sb.from('categories').insert({ user_id: user.id, nom: v, couleur: hashColor(v, CAT_EXTRA), ordre: 100, groupe_id: gid || null }).select().single();
       if (error) { fail("La catégorie n'a pas été enregistrée.", error); return null; }
       cats.push({ id: data.id, nom: data.nom, couleur: data.couleur || '', groupe_id: data.groupe_id || null }); saveCache();
     }
     return v;
   }
-  async function addCat(){ const n = await createCat($('e-newcat').value); if (!n) { $('e-newcat').focus(); return; } eCat = n; clearMissing('ef-cat'); $('e-newcat-w').hidden = true; paintChips(); }
+  async function addCat(){ const n = await createCat($('e-newcat').value, $('e-newcat-g').value); if (!n) { $('e-newcat').focus(); return; } eCat = n; clearMissing('ef-cat'); $('e-newcat-w').hidden = true; paintChips(); }
   $('e-newcat-ok').onclick = addCat;
   $('e-newcat').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addCat(); } if (e.key === 'Escape') { e.stopPropagation(); $('e-newcat-w').hidden = true; } });
 
@@ -1067,7 +1408,6 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     openSheet('v-exp', d ? 'Modifier la dépense' : 'Nouvelle dépense', () => eState() !== eSnap);
     if (!d) setTimeout(()=>$('e-lib').focus(), 260);
   }
-  $('fab').onclick = ()=> openExp(null);
 
   $('v-exp').addEventListener('submit', async ev => {
     ev.preventDefault();
@@ -1159,9 +1499,9 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   $('b-del').onclick = ()=>{ closeSheet(true); saveBudget(null); };
 
   /* ---------- mois ---------- */
-  $('prev').onclick = ()=>{ cur = shift(cur,-1); verifOnly = false; render(); ensureRecurrences(key(cur)); };
-  $('next').onclick = ()=>{ cur = shift(cur, 1); verifOnly = false; render(); ensureRecurrences(key(cur)); };
-  document.querySelectorAll('.seg button').forEach(b => b.onclick = ()=>{ filter = b.dataset.f; store.set('carnet-filtre', filter); render(); });
+  $('prev').onclick = ()=>{ cur = shift(cur,-1); if (listFilter && listFilter.type === 'verif') listFilter = null; render(); ensureRecurrences(key(cur)); };
+  $('next').onclick = ()=>{ cur = shift(cur, 1); if (listFilter && listFilter.type === 'verif') listFilter = null; render(); ensureRecurrences(key(cur)); };
+  document.querySelectorAll('#dep-seg button').forEach(b => b.onclick = ()=>{ filter = b.dataset.f; store.set('carnet-filtre', filter); render(); });
 
   $('copy').onclick = async ()=>{
     const from = key(shift(cur,-1)), to = key(cur);
@@ -1439,6 +1779,351 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     toast('Supprimé. Les échéances passées et déjà cochées sont conservées.');
   };
 
+  /* ---------- bouton ＋ : dépense ou entrée ---------- */
+  $('fab').onclick = () => { if (!v3) { toast('Mettez d’abord à jour la base (voir le message en haut).'); return; } openSheet('v-add', 'Ajouter'); };
+  $('add-dep').onclick = () => openExp(null);
+  $('add-ent').onclick = () => openEnt(null);
+  $('ent-add').onclick = () => openEnt(null);
+  $('ent-add2').onclick = () => openEnt(null);
+
+  /* ---------- entrée d'argent ---------- */
+  let nEditing = null, nRecue = false, nDelArmed = false, nSnap = '';
+  const NF = ['nf-src','nf-amt','nf-date'];
+  const nState = () => JSON.stringify([$('n-src').value, $('n-amt').value, $('n-date').value, $('n-lib').value, nRecue]);
+  function fillSrc(sel, value){
+    sel.textContent = '';
+    const names = [...new Set([...srcs, value].filter(Boolean))];
+    [['', 'Choisir une source…'], ...names.map(n => [n, n]), ['__new', '+ Ajouter une source…']]
+      .forEach(([v, t]) => { const o = document.createElement('option'); o.value = v; o.textContent = t; sel.append(o); });
+    sel.value = value || '';
+  }
+  async function createSrc(name){
+    const n = capFirst(name || ''); if (!n) return null;
+    const same = srcs.find(s => s.toLowerCase() === n.toLowerCase()); if (same) return same;
+    const { error } = await sb.from('sources').insert({ user_id: user.id, nom: n });
+    if (error) { fail("La source n'a pas été enregistrée.", error); return null; }
+    srcs.push(n); saveCache(); return n;
+  }
+  $('n-src').addEventListener('change', () => {
+    if ($('n-src').value === '__new') { $('n-src').value = ''; $('n-newsrc-w').hidden = false; $('n-newsrc').value = ''; $('n-newsrc').focus(); }
+    else if ($('n-src').value) clearMissing('nf-src');
+  });
+  const addNSrc = async () => { const n = await createSrc($('n-newsrc').value); if (!n) { $('n-newsrc').focus(); return; } fillSrc($('n-src'), n); $('n-newsrc-w').hidden = true; clearMissing('nf-src'); };
+  $('n-newsrc-ok').onclick = addNSrc;
+  $('n-newsrc').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addNSrc(); } if (e.key === 'Escape') { e.stopPropagation(); $('n-newsrc-w').hidden = true; } });
+  $('n-amt').addEventListener('input', () => clearMissing('nf-amt'));
+  ['input','change'].forEach(ev => $('n-date').addEventListener(ev, () => clearMissing('nf-date')));
+  const nPaint = () => { $('n-recue').setAttribute('aria-checked', nRecue); $('n-date-l').textContent = nRecue ? 'Date de réception' : 'Date prévue'; };
+  $('n-recue').onclick = () => { nRecue = !nRecue; nPaint(); };
+  function openEnt(e){
+    if (!v3) { toast('Mettez d’abord à jour la base (voir le message en haut).'); return; }
+    nEditing = e || null; nDelArmed = false;
+    fillSrc($('n-src'), e ? e.source : ''); $('n-newsrc-w').hidden = true;
+    $('n-amt').value = e ? String(e.montant).replace('.', ',') : '';
+    $('n-date').value = e && e.date ? e.date : '';
+    $('n-lib').value = e ? e.libelle : '';
+    nRecue = e ? e.recue : false; nPaint();
+    $('n-save').textContent = e ? 'Enregistrer' : 'Ajouter';
+    $('n-del').hidden = !e; $('n-del').textContent = 'Supprimer'; $('n-err').textContent = ''; markMissing([], NF);
+    nSnap = nState();
+    openSheet('v-ent', e ? "Modifier l'entrée" : "Nouvelle entrée d'argent", () => nState() !== nSnap);
+  }
+  $('v-ent').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const src = readSel('n-src'), amt = parseAmt($('n-amt').value), date = $('n-date').value;
+    const miss = [], names = [];
+    if (!src) { miss.push('nf-src'); names.push('la source'); }
+    if (!(amt > 0)) { miss.push('nf-amt'); names.push('le montant'); }
+    if (!date) { miss.push('nf-date'); names.push(nRecue ? 'la date de réception' : 'la date prévue'); }
+    if (miss.length) { markMissing(miss, NF); $('n-err').textContent = 'À compléter : ' + names.join(', ') + '.'; return; }
+    const data = { source: src, montant: amt, date, mois: date.slice(0, 7), libelle: $('n-lib').value.trim(), recue: nRecue, date_a_verifier: false };
+    const was = nEditing; closeSheet(true);
+    if (was) {
+      const { data: row, error } = await sb.from('entrees').update(data).eq('id', was.id).select().single();
+      if (error) return fail("La modification n'a pas été enregistrée.", error);
+      Object.assign(was, normEnt(row)); toast('Entrée modifiée');
+    } else {
+      const { data: row, error } = await sb.from('entrees').insert(Object.assign({ user_id: user.id }, data)).select().single();
+      if (error) return fail("L'entrée n'a pas été enregistrée.", error);
+      entrees.push(normEnt(row));
+      toast(data.mois === key(cur) ? 'Entrée ajoutée' : 'Entrée ajoutée en ' + monthName(monthOfKey(data.mois)));
+    }
+    saveCache(); render();
+  });
+  $('n-del').onclick = async () => {
+    if (!nDelArmed) { nDelArmed = true; $('n-del').textContent = 'Confirmer'; return; }
+    const e = nEditing; closeSheet(true);
+    const { error } = await sb.from('entrees').delete().eq('id', e.id);
+    if (error) return fail("La suppression n'a pas abouti.", error);
+    entrees = entrees.filter(x => x.id !== e.id); saveCache(); render(); toast('Entrée supprimée');
+  };
+
+  /* ---------- répartir mon budget ---------- */
+  let repMode = 'montant', repVals = {}, repModel = false, repE = 0, repK = '';
+  const repAmount = gid => { const v = parseAmt(repVals[gid] || ''); if (!isFinite(v) || v < 0) return 0; return repMode === 'pct' ? r2(repE * v / 100) : v; };
+  function openRep(){
+    if (!v3) return;
+    repK = key(cur);
+    const a = alloc(repK); repE = a.E;
+    repMode = a.src && Object.values(a.rows).some(x => x.pct != null) ? 'pct' : 'montant';
+    repVals = {};
+    groupes.forEach(g => { const x = a.rows[g.id]; if (!x) { repVals[g.id] = ''; return; }
+      const v = repMode === 'pct' ? (x.pct != null ? x.pct : (a.E ? x.montant / a.E * 100 : 0)) : a.eff[g.id];
+      repVals[g.id] = v ? String(r2(v)).replace('.', ',') : ''; });
+    repModel = false;
+    $('rep-month').textContent = monthName(cur); $('rep-e').textContent = eur.format(repE);
+    $('rep-noent').hidden = repE > 0;
+    $('rep-del').hidden = !(reps[repK] && Object.keys(reps[repK]).length); $('rep-del').textContent = 'Effacer';
+    $('rep-err').textContent = '';
+    const snap = JSON.stringify([repMode, repVals]);
+    paintRep(true);
+    openSheet('v-rep', 'Répartir mon budget', () => JSON.stringify([repMode, repVals]) !== snap);
+  }
+  function paintRep(rebuild){
+    document.querySelectorAll('#rep-mode .chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.m === repMode));
+    $('rep-model').setAttribute('aria-checked', repModel);
+    const rows = $('rep-rows');
+    if (rebuild) {
+      rows.textContent = '';
+      const spentBy = {};
+      all.filter(d => d.mois === repK && d.payee).forEach(d => { const g = grpOfCat(d.categorie) || 'nc'; spentBy[g] = (spentBy[g] || 0) + d.montant; });
+      groupes.forEach(g => {
+        const r = el('div', 'reprow');
+        const nm = el('div', 'nm'); const dot = el('i', 'dot'); dot.style.background = g.couleur || '#7a8783';
+        const t = el('span', 'repname'); t.append(dot, document.createTextNode(g.nom)); nm.append(t);
+        nm.append(el('small', 'repsub', spentBy[g.id] ? 'Déjà dépensé : ' + eur.format(spentBy[g.id]) : 'Rien de dépensé'));
+        const w = el('div', 'amtwrap rep'); w.dataset.sym = repMode === 'pct' ? '%' : SYM;
+        const inp = el('input', 'inp'); inp.inputMode = 'decimal'; inp.id = 'rep-' + g.id; inp.value = repVals[g.id] || ''; inp.placeholder = '0';
+        inp.setAttribute('aria-label', 'Montant pour ' + g.nom);
+        inp.addEventListener('input', () => { repVals[g.id] = inp.value; $('rep-err').textContent = ''; paintRep(false); });
+        w.append(inp);
+        const eq = el('small', 'repeq'); eq.id = 'repeq-' + g.id;
+        const right = el('div', 'repright'); right.append(w, eq);
+        r.append(nm, right); rows.append(r);
+      });
+    }
+    let tot = 0;
+    groupes.forEach(g => {
+      const amt = repAmount(g.id); tot += amt;
+      const eq = $('repeq-' + g.id); if (!eq) return;
+      eq.textContent = repMode === 'pct' ? (amt ? '= ' + eur.format(amt) : '') : (repE && amt ? '= ' + Math.round(amt / repE * 100) + ' %' : '');
+    });
+    tot = r2(tot);
+    const left = r2(repE - tot), lf = $('rep-left'); lf.textContent = '';
+    lf.className = 'repleft' + (left < 0 ? ' bad' : left === 0 && tot > 0 ? ' ok' : '');
+    lf.append(el('span', null, left < 0 ? 'Réparti en trop' : 'Reste à répartir'), el('b', null, eur.format(Math.abs(left))));
+    const q = $('rep-quick'); q.textContent = '';
+    const prevK = key(shift(cur, -1));
+    const quick = (label, fn) => { const b = el('button', 'chip', label); b.type = 'button'; b.onclick = fn; q.append(b); };
+    if (reps[prevK] && Object.keys(reps[prevK]).length) quick('Reprendre ' + monthName(shift(cur, -1)).split(' ')[0], () => {
+      const pa = alloc(prevK); const usePct = Object.values(pa.rows).some(x => x.pct != null); repMode = usePct ? 'pct' : 'montant';
+      groupes.forEach(g => { const x = pa.rows[g.id]; repVals[g.id] = x ? String(usePct ? (x.pct != null ? x.pct : 0) : x.montant).replace('.', ',') : ''; }); paintRep(true); });
+    if (hasModel()) quick('Appliquer mon modèle', () => {
+      const usePct = groupes.some(g => g.modele_pct != null); repMode = usePct ? 'pct' : 'montant';
+      groupes.forEach(g => { const v = usePct ? g.modele_pct : g.modele_montant; repVals[g.id] = v != null ? String(v).replace('.', ',') : ''; }); paintRep(true); });
+    if (left > 0 && groupes.length) quick('Mettre le reste dans Économies', () => {
+      const eco = groupes.find(g => g.role === 'economies') || groupes[0];
+      const cur2 = repAmount(eco.id) + left;
+      repVals[eco.id] = String(r2(repMode === 'pct' ? (repE ? cur2 / repE * 100 : 0) : cur2)).replace('.', ','); paintRep(true); });
+  }
+  document.querySelectorAll('#rep-mode .chip').forEach(b => b.onclick = () => {
+    const m = b.dataset.m; if (m === repMode) return;
+    groupes.forEach(g => { const amt = repAmount(g.id); repVals[g.id] = amt ? String(r2(m === 'pct' ? (repE ? amt / repE * 100 : 0) : amt)).replace('.', ',') : ''; });
+    repMode = m; paintRep(true);
+  });
+  $('rep-model').onclick = () => { repModel = !repModel; paintRep(false); };
+  $('env-edit').onclick = () => openRep();
+  $('rep-open').onclick = () => openRep();
+  $('rep-save').onclick = async () => {
+    if (repE <= 0) { $('rep-err').textContent = "Ajoutez d'abord les entrées d'argent du mois."; return; }
+    const tot = r2(groupes.reduce((s, g) => s + repAmount(g.id), 0));
+    if (tot > repE + 0.005) { $('rep-err').textContent = 'Vous répartissez ' + eur.format(tot - repE) + ' de plus que vos entrées. Réduisez une enveloppe.'; return; }
+    if (tot <= 0) { $('rep-err').textContent = 'Indiquez un montant pour au moins une enveloppe.'; return; }
+    const rows = groupes.map(g => { const raw = parseAmt(repVals[g.id] || ''); const v = isFinite(raw) && raw > 0 ? raw : 0;
+      return { user_id: user.id, mois: repK, groupe_id: g.id, montant: repMode === 'pct' ? r2(repE * v / 100) : v, pourcentage: repMode === 'pct' ? v : null }; });
+    $('rep-save').disabled = true;
+    let { error } = await sb.from('repartitions').upsert(rows, { onConflict: 'user_id,mois,groupe_id' });
+    if (!error && repModel) {
+      for (const r of rows) {
+        const patch = repMode === 'pct' ? { modele_pct: r.pourcentage, modele_montant: null } : { modele_montant: r.montant, modele_pct: null };
+        ({ error } = await sb.from('groupes').update(patch).eq('id', r.groupe_id)); if (error) break;
+        Object.assign(grpById(r.groupe_id), patch);
+      }
+    }
+    $('rep-save').disabled = false;
+    if (error) { $('rep-err').textContent = "L'enregistrement n'a pas abouti. Vérifiez votre connexion."; console.error(error); return; }
+    reps[repK] = {}; rows.forEach(r => reps[repK][r.groupe_id] = { montant: r.montant, pct: r.pourcentage });
+    saveCache(); closeSheet(true); render(); toast(repModel ? 'Répartition enregistrée, et utilisée pour les prochains mois' : 'Répartition enregistrée');
+  };
+  $('rep-del').onclick = async () => {
+    if ($('rep-del').textContent !== 'Confirmer') { $('rep-del').textContent = 'Confirmer'; return; }
+    const { error } = await sb.from('repartitions').delete().eq('mois', repK);
+    if (error) return fail("L'effacement n'a pas abouti.", error);
+    delete reps[repK]; saveCache(); closeSheet(true); render();
+    toast(hasModel() ? 'Répartition du mois effacée : votre modèle s’applique' : 'Répartition du mois effacée');
+  };
+
+  /* ---------- clôturer le mois ---------- */
+  let cloTarget = null;
+  function openClo(c){
+    cloTarget = c;
+    $('clo-txt').textContent = monthName(monthOfKey(c.k)).replace(/^./, x => x.toUpperCase()) + ' : ' + eur.format(c.E) + ' d’entrées, ' + eur.format(c.paid) + ' de dépenses payées. Il reste ' + eur.format(c.reste) + '. Vous pouvez ajuster le montant versé.';
+    $('clo-amt').value = String(c.reste).replace('.', ','); $('clo-err').textContent = '';
+    openSheet('v-clo', 'Clôturer ' + monthName(monthOfKey(c.k)));
+  }
+  async function ensureResteCat(){
+    if (cats.some(c => c.nom === 'Reste du mois')) return true;
+    const eco = groupes.find(g => g.role === 'economies');
+    const { data, error } = await sb.from('categories').insert({ user_id: user.id, nom: 'Reste du mois', couleur: '#5c8a3a', groupe_id: eco ? eco.id : null, ordre: 99 }).select().single();
+    if (error) { console.error(error); return false; }
+    cats.push({ id: data.id, nom: data.nom, couleur: data.couleur, groupe_id: data.groupe_id }); return true;
+  }
+  $('clo-ok').onclick = async () => {
+    const c = cloTarget, amt = parseAmt($('clo-amt').value);
+    if (!isFinite(amt) || amt < 0) { $('clo-err').textContent = 'Indiquez un montant valide.'; return; }
+    let depId = null;
+    if (amt > 0) {
+      if (!(await ensureResteCat())) { $('clo-err').textContent = "La catégorie « Reste du mois » n'a pas pu être créée."; return; }
+      const last = new Date(Number(c.k.slice(0, 4)), Number(c.k.slice(5)), 0).getDate();
+      const { data, error } = await sb.from('depenses').insert({ user_id: user.id, mois: c.k, date: c.k + '-' + pad2(last), libelle: 'Reste du mois', categorie: 'Reste du mois', montant: amt, type: 'prevue', moyen: '', payee: true }).select().single();
+      if (error) { $('clo-err').textContent = "La clôture n'a pas abouti. Réessayez."; console.error(error); return; }
+      all.push(norm(data)); depId = data.id;
+    }
+    const { error } = await sb.from('clotures').upsert({ user_id: user.id, mois: c.k, montant: amt, depense_id: depId }, { onConflict: 'user_id,mois' });
+    if (error) { console.error(error); }
+    clos[c.k] = amt; saveCache(); closeSheet(true); render();
+    toast(amt > 0 ? eur.format(amt) + ' versés dans Économies. ' + monthName(monthOfKey(c.k)) + ' est soldé.' : monthName(monthOfKey(c.k)) + ' est clôturé.');
+  };
+  $('clo-skip').onclick = async () => {
+    const c = cloTarget;
+    await sb.from('clotures').upsert({ user_id: user.id, mois: c.k, montant: 0, depense_id: null }, { onConflict: 'user_id,mois' });
+    clos[c.k] = 0; saveCache(); closeSheet(true); render(); toast(monthName(monthOfKey(c.k)) + ' est clôturé, sans versement.');
+  };
+
+  /* ---------- mes catégories et enveloppes ---------- */
+  const PAL = ['#3e6fb0','#2f7d6b','#c0507a','#7a8783','#c07a2c','#c0505a','#8a5bb0','#b0902c','#4f9a3e','#b0476b','#c2562f','#2f7f8f'];
+  function swatchPicker(id, value, onPick){
+    const w = $(id); w.textContent = '';
+    PAL.forEach(c => { const b = el('button', 'sw'); b.type = 'button'; b.style.background = c; b.setAttribute('aria-pressed', c === value); b.setAttribute('aria-label', 'Couleur ' + c);
+      b.onclick = () => { onPick(c); swatchPicker(id, c, onPick); }; w.append(b); });
+  }
+  const usage = name => all.filter(d => d.categorie === name).length + fixes.filter(f => f.categorie === name).length;
+  function renderGroups(){
+    const box = $('grp-list'); box.textContent = '';
+    const block = (g, list) => {
+      const card = el('div', 'menu grpcard');
+      const head = el('button', 'crow btn grphead'); head.type = 'button';
+      const dot = el('span', 'mdot'); dot.style.background = g.couleur || '#7a8783';
+      const nm = el('div', 'nm', g.nom); nm.append(el('small', null, list.length + ' catégorie' + (list.length > 1 ? 's' : '') + (g.role === 'economies' ? ' · reçoit le « Reste du mois »' : '')));
+      head.append(dot, nm);
+      if (g.id !== 'nc') head.onclick = () => openGrp(g); else { head.disabled = true; head.classList.add('static'); }
+      card.append(head);
+      list.forEach(c => {
+        const r = el('button', 'crow btn sub'); r.type = 'button';
+        const d = el('span', 'mdot'); d.style.background = c.couleur || catColor(c.nom);
+        const n = usage(c.nom); const t = el('div', 'nm', c.nom); t.append(el('small', null, n ? n + ' utilisation' + (n > 1 ? 's' : '') : 'Pas encore utilisée'));
+        r.append(d, t); r.onclick = () => openCat(c); card.append(r);
+      });
+      box.append(card);
+    };
+    groupes.forEach(g => block(g, cats.filter(c => c.groupe_id === g.id)));
+    const nc = cats.filter(c => !c.groupe_id || !grpById(c.groupe_id));
+    if (nc.length) block({ id: 'nc', nom: 'Non classées', couleur: '#7a8783' }, nc);
+  }
+  let gEditing = null, gColor = PAL[0], gDelArmed = false;
+  function openGrp(g){
+    gEditing = g || null; gDelArmed = false; gColor = g ? (g.couleur || PAL[0]) : PAL[groupes.length % PAL.length];
+    $('g-name').value = g ? g.nom : ''; swatchPicker('g-colors', gColor, c => gColor = c);
+    $('g-note').textContent = g ? (g.role === 'economies' ? 'Cette grande catégorie reçoit le « Reste du mois » lors de la clôture.' : '') + ' Supprimer une grande catégorie range ses catégories dans « Non classées ».' : '';
+    $('g-del').hidden = !g; $('g-del').textContent = 'Supprimer'; $('g-err').textContent = ''; $('gf-name').classList.remove('missing');
+    openSheet('v-grp', g ? 'Grande catégorie' : 'Nouvelle grande catégorie');
+    if (!g) setTimeout(() => $('g-name').focus(), 260);
+  }
+  $('g-save').onclick = async () => {
+    const n = capFirst($('g-name').value || '');
+    if (!n) { $('gf-name').classList.add('missing'); $('g-err').textContent = 'Indiquez un nom.'; return; }
+    if (groupes.some(g => g !== gEditing && g.nom.toLowerCase() === n.toLowerCase())) { $('g-err').textContent = 'Ce nom existe déjà.'; return; }
+    let error;
+    if (gEditing) { ({ error } = await sb.from('groupes').update({ nom: n, couleur: gColor }).eq('id', gEditing.id)); if (!error) Object.assign(gEditing, { nom: n, couleur: gColor }); }
+    else { const r = await sb.from('groupes').insert({ user_id: user.id, nom: n, couleur: gColor, ordre: groupes.reduce((m, g) => Math.max(m, g.ordre || 0), 0) + 1 }).select().single(); error = r.error; if (!error) groupes.push(normGrp(r.data)); }
+    if (error) { $('g-err').textContent = "L'enregistrement n'a pas abouti."; console.error(error); return; }
+    saveCache(); render(); openSheet('v-groups', 'Mes catégories et enveloppes'); renderGroups();
+  };
+  $('g-del').onclick = async () => {
+    if (!gDelArmed) { gDelArmed = true; $('g-del').textContent = 'Confirmer'; return; }
+    const g = gEditing;
+    const { error } = await sb.from('groupes').delete().eq('id', g.id);
+    if (error) { $('g-err').textContent = "La suppression n'a pas abouti."; console.error(error); return; }
+    groupes = groupes.filter(x => x.id !== g.id); cats.forEach(c => { if (c.groupe_id === g.id) c.groupe_id = null; });
+    Object.values(reps).forEach(r => delete r[g.id]);
+    saveCache(); render(); openSheet('v-groups', 'Mes catégories et enveloppes'); renderGroups(); toast('« ' + g.nom + ' » supprimée');
+  };
+  let kEditing = null, kColor = PAL[0], kDelArmed = false;
+  function fillGrpSelect(sel, value){
+    sel.textContent = '';
+    [...groupes.map(g => [g.id, g.nom]), ['', 'Non classée']].forEach(([v, t]) => { const o = document.createElement('option'); o.value = v; o.textContent = t; sel.append(o); });
+    sel.value = value || '';
+  }
+  function openCat(c){
+    kEditing = c || null; kDelArmed = false; kColor = c ? (c.couleur || catColor(c.nom)) : PAL[cats.length % PAL.length];
+    $('k-name').value = c ? c.nom : ''; fillGrpSelect($('k-grp'), c ? c.groupe_id : (groupes[0] || {}).id);
+    swatchPicker('k-colors', kColor, x => kColor = x);
+    const n = c ? usage(c.nom) : 0;
+    $('k-note').textContent = c ? (n ? 'Utilisée par ' + n + ' dépense' + (n > 1 ? 's' : '') + ' ou récurrence' + (n > 1 ? 's' : '') + ' : la renommer les met toutes à jour.' : 'Pas encore utilisée.') : '';
+    $('k-del').hidden = !c; $('k-del').textContent = 'Supprimer'; $('k-err').textContent = ''; $('kf-name').classList.remove('missing');
+    openSheet('v-cat', c ? 'Catégorie' : 'Nouvelle catégorie');
+    if (!c) setTimeout(() => $('k-name').focus(), 260);
+  }
+  $('k-save').onclick = async () => {
+    const n = capFirst($('k-name').value || ''), gid = $('k-grp').value || null;
+    if (!n) { $('kf-name').classList.add('missing'); $('k-err').textContent = 'Indiquez un nom.'; return; }
+    if (cats.some(c => c !== kEditing && c.nom.toLowerCase() === n.toLowerCase())) { $('k-err').textContent = 'Cette catégorie existe déjà.'; return; }
+    let error;
+    if (kEditing) {
+      const old = kEditing.nom;
+      ({ error } = await sb.from('categories').update({ nom: n, couleur: kColor, groupe_id: gid }).eq('id', kEditing.id));
+      if (!error && old !== n) {
+        ({ error } = await sb.from('depenses').update({ categorie: n }).eq('categorie', old));
+        if (!error) ({ error } = await sb.from('fixes').update({ categorie: n }).eq('categorie', old));
+        if (!error) { all.forEach(d => { if (d.categorie === old) d.categorie = n; }); fixes.forEach(f => { if (f.categorie === old) f.categorie = n; }); }
+      }
+      if (!error) Object.assign(kEditing, { nom: n, couleur: kColor, groupe_id: gid });
+    } else {
+      const r = await sb.from('categories').insert({ user_id: user.id, nom: n, couleur: kColor, groupe_id: gid, ordre: 100 }).select().single(); error = r.error;
+      if (!error) cats.push({ id: r.data.id, nom: r.data.nom, couleur: r.data.couleur || '', groupe_id: r.data.groupe_id || null });
+    }
+    if (error) { $('k-err').textContent = "L'enregistrement n'a pas abouti."; console.error(error); return; }
+    saveCache(); render(); openSheet('v-groups', 'Mes catégories et enveloppes'); renderGroups();
+  };
+  $('k-del').onclick = async () => {
+    const c = kEditing, n = usage(c.nom);
+    if (n) { $('k-err').textContent = 'Elle est utilisée par ' + n + ' dépense' + (n > 1 ? 's' : '') + ' ou récurrence' + (n > 1 ? 's' : '') + '. Renommez-la ou changez leur catégorie avant de la supprimer.'; return; }
+    if (!kDelArmed) { kDelArmed = true; $('k-del').textContent = 'Confirmer'; return; }
+    const { error } = await sb.from('categories').delete().eq('id', c.id);
+    if (error) { $('k-err').textContent = "La suppression n'a pas abouti."; console.error(error); return; }
+    cats = cats.filter(x => x.id !== c.id); saveCache(); render(); openSheet('v-groups', 'Mes catégories et enveloppes'); renderGroups();
+  };
+  $('grp-new').onclick = () => openGrp(null);
+  $('cat-new').onclick = () => openCat(null);
+
+  /* ---------- mes sources de revenus ---------- */
+  function renderSrcs(){
+    const list = $('src-list'); list.textContent = ''; $('src-err').textContent = '';
+    if (!srcs.length) { const r = el('div', 'crow'); r.append(el('div', 'nm', 'Aucune source.')); list.append(r); }
+    srcs.forEach(s => {
+      const r = el('div', 'crow'); const n = entrees.filter(e => e.source === s).length + fixes.filter(f => f.source === s).length;
+      const t = el('div', 'nm', s); t.append(el('small', null, n ? n + ' entrée' + (n > 1 ? 's' : '') + ' ou revenu' + (n > 1 ? 's' : '') + ' récurrent' + (n > 1 ? 's' : '') : 'Pas encore utilisée')); r.append(t);
+      if (!n) { const x = el('button', 'x', 'Supprimer'); x.type = 'button'; let armed = false;
+        x.onclick = async () => { if (!armed) { armed = true; x.textContent = 'Confirmer'; return; }
+          const { error } = await sb.from('sources').delete().eq('nom', s);
+          if (error) return fail("La suppression n'a pas abouti.", error);
+          srcs = srcs.filter(z => z !== s); saveCache(); renderSrcs(); }; r.append(x); }
+      list.append(r);
+    });
+  }
+  $('src-add').onclick = async () => { const n = await createSrc($('src-name').value); if (!n) { $('src-name').focus(); return; } $('src-name').value = ''; renderSrcs(); toast('Source « ' + n + ' » ajoutée'); };
+  $('src-name').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('src-add').click(); } });
+
   /* ---------- compte ---------- */
   function renderCompte(){
     if (!user) return;
@@ -1446,13 +2131,17 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     $('acc-av').textContent = (user.email || '?').charAt(0);
     $('acc-since').textContent = user.created_at ? 'Compte créé le ' + new Date(user.created_at).toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' }) : '';
     $('n-cards').textContent = String(cartes.length + 1);
+    $('n-grps').textContent = String(groupes.length);
+    $('n-srcs').textContent = String(srcs.length);
     $('n-cur').textContent = CUR;
   }
-  const VIEW_TITLES = { 'v-cards':'Mes cartes bancaires', 'v-cur':'Ma monnaie', 'v-pass':'Changer mon mot de passe', 'v-mail':"Changer d'adresse e-mail", 'v-del':'Supprimer mon compte' };
+  const VIEW_TITLES = { 'v-groups':'Mes catégories et enveloppes', 'v-srcs':'Mes sources de revenus', 'v-cards':'Mes cartes bancaires', 'v-cur':'Ma monnaie', 'v-pass':'Changer mon mot de passe', 'v-mail':"Changer d'adresse e-mail", 'v-del':'Supprimer mon compte' };
   document.querySelectorAll('[data-open]').forEach(b => b.onclick = () => {
     const v = b.dataset.open;
     ['p-err','m-err','m-ok','d-err','c-err','cur-err'].forEach(i => $(i).textContent = '');
     if (v === 'v-cards') renderCards();
+    if (v === 'v-groups') renderGroups();
+    if (v === 'v-srcs') renderSrcs();
     if (v === 'v-cur') renderCurrencies();
     if (v === 'v-pass') { $('p-new').value = ''; $('p-new2').value = ''; hidePw(); }
     if (v === 'v-mail') $('m-new').value = '';
@@ -1557,7 +2246,10 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
       depenses: all.map(({ mois, date, libelle, categorie, montant, type, moyen, payee }) => ({ mois, date, libelle, categorie, montant, type, moyen, payee })),
       budgets: Object.entries(budgets).map(([mois, montant]) => ({ mois, montant })),
       cartes: cartes.map(({ nom, couleur }) => ({ nom, couleur })),
-      categories: cats.map(({ nom, couleur }) => ({ nom, couleur })),
+      categories: cats.map(({ nom, couleur, groupe_id }) => ({ nom, couleur, groupe: (grpById(groupe_id) || {}).nom || null })),
+      groupes: groupes.map(({ nom, couleur, ordre, role, modele_montant, modele_pct }) => ({ nom, couleur, ordre, role, modele_montant, modele_pct })),
+      entrees: entrees.map(({ mois, date, source, libelle, montant, recue }) => ({ mois, date, source, libelle, montant, recue })),
+      repartitions: Object.entries(reps).flatMap(([mois, r]) => Object.entries(r).map(([gid, x]) => ({ mois, groupe: (grpById(gid) || {}).nom, montant: x.montant, pourcentage: x.pct })).filter(x => x.groupe)),
       sources: srcs.slice(),
       fixes: fixes.map(({ genre, libelle, montant, categorie, moyen, periode, date_debut, debut, jour, fin, source }) => ({ genre, libelle, montant, categorie, moyen, periode, date_debut, debut, jour, fin, source })) };
     const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
@@ -1589,9 +2281,15 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
             categorie: g === 'revenu' ? null : String(f.categorie).slice(0,30), moyen: g === 'revenu' ? null : String(f.moyen).slice(0,40), source: g === 'revenu' ? String(f.source).slice(0,40) : '',
             date_debut: dd, debut: dd.slice(0, 7), fin: okDate(f.fin) ? f.fin : null, jour: Number(f.jour) >= 1 && Number(f.jour) <= 31 ? Number(f.jour) : null }; }) : [];
       const sr = Array.isArray(j.sources) ? j.sources.filter(x => typeof x === 'string' && x.trim()).map(x => ({ user_id: user.id, nom: x.trim().slice(0, 40) })) : [];
-      pending = { dep, bud, crd, cts, fx, sr };
+      const ens = Array.isArray(j.entrees) ? j.entrees.filter(e => e && okDate(e.date) && Number(e.montant) > 0 && e.source)
+        .map(e => ({ user_id: user.id, mois: e.date.slice(0, 7), date: e.date, source: String(e.source).slice(0, 40), libelle: String(e.libelle || '').slice(0, 80), montant: Number(e.montant), recue: !!e.recue })) : [];
+      const grs = Array.isArray(j.groupes) ? j.groupes.filter(g => g && g.nom).map(g => ({ user_id: user.id, nom: String(g.nom).slice(0, 40), couleur: /^#[0-9a-fA-F]{6}$/.test(g.couleur || '') ? g.couleur : '', ordre: Number(g.ordre) || 0, role: g.role === 'economies' ? 'economies' : null })) : [];
+      const catGrp = Array.isArray(j.categories) ? j.categories.filter(c => c && c.nom && c.groupe).map(c => [String(c.nom).slice(0, 30), String(c.groupe)]) : [];
+      const rps = Array.isArray(j.repartitions) ? j.repartitions.filter(r => r && /^\d{4}-\d{2}$/.test(r.mois) && r.groupe) : [];
+      pending = { dep, bud, crd, cts, fx, sr, ens, grs, catGrp, rps };
       const parts = [dep.length + ' dépense' + (dep.length>1?'s':''), bud.length + ' budget' + (bud.length>1?'s':'')];
       if (crd.length) parts.push(crd.length + ' carte' + (crd.length>1?'s':''));
+      if (ens.length) parts.push(ens.length + ' entrée' + (ens.length>1?'s':'') + " d'argent");
       if (fx.length) parts.push(fx.length + ' récurrence' + (fx.length>1?'s':'') + ' (abonnements, fixes, revenus)');
       $('s-confirm-txt').textContent = parts.join(', ') + ' seront ajoutés à vos données. Les budgets des mêmes mois seront remplacés.';
       $('s-confirm').hidden = false;
@@ -1601,7 +2299,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   $('s-go').onclick = async ()=>{
     if (!pending) return;
     $('s-go').disabled = true;
-    const { dep, bud, crd, cts, fx, sr } = pending;
+    const { dep, bud, crd, cts, fx, sr, ens, grs, catGrp, rps } = pending;
     const r0 = sr.length ? await sb.from('sources').upsert(sr, { onConflict: 'user_id,nom', ignoreDuplicates: true }) : { error: null };
     const r1 = dep.length ? await sb.from('depenses').insert(dep) : { error: null };
     const r2 = bud.length ? await sb.from('budgets').upsert(bud, { onConflict: 'user_id,mois' }) : { error: null };
@@ -1609,7 +2307,18 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     const r4 = cts.length ? await sb.from('categories').upsert(cts, { onConflict: 'user_id,nom', ignoreDuplicates: true }) : { error: null };
     const r5 = fx.length ? await sb.from('fixes').insert(fx) : { error: null };
     $('s-go').disabled = false;
-    const er = r0.error || r1.error || r2.error || r3.error || r4.error || r5.error;
+    const r6 = ens.length ? await sb.from('entrees').insert(ens) : { error: null };
+    let r7 = { error: null };
+    if (grs.length) {
+      r7 = await sb.from('groupes').upsert(grs, { onConflict: 'user_id,nom', ignoreDuplicates: true });
+      if (!r7.error && (catGrp.length || rps.length)) {
+        const all2 = await sb.from('groupes').select('id,nom'); const ids = {}; (all2.data || []).forEach(g => ids[g.nom] = g.id);
+        for (const [nom, gn] of catGrp) if (ids[gn]) await sb.from('categories').update({ groupe_id: ids[gn] }).eq('nom', nom);
+        const rows = rps.filter(r => ids[r.groupe]).map(r => ({ user_id: user.id, mois: r.mois, groupe_id: ids[r.groupe], montant: Number(r.montant) || 0, pourcentage: r.pourcentage != null ? Number(r.pourcentage) : null }));
+        if (rows.length) r7 = await sb.from('repartitions').upsert(rows, { onConflict: 'user_id,mois,groupe_id' });
+      }
+    }
+    const er = r0.error || r1.error || r2.error || r3.error || r4.error || r5.error || r6.error || r7.error;
     if (er) { $('s-err').textContent = "L'import n'a pas abouti. Vérifiez votre connexion et réessayez."; console.error(er); return; }
     pending = null; $('s-confirm').hidden = true; applied.clear(); toast('Import terminé'); load();
   };
@@ -1734,13 +2443,13 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     $('auth').hidden = true; $('app').hidden = false;
     if (changed) {
       const c = store.get(cacheKey());
-      if (c && Array.isArray(c.all) && c.all.length && 'date' in c.all[0]) { all = c.all; budgets = c.budgets || {}; cartes = c.cartes || []; fixes = c.fixes || []; cats = c.cats || []; srcs = c.srcs || []; loaded = true; setSync(false); }
+      if (c && Array.isArray(c.all) && c.all.length && 'date' in c.all[0]) { all = c.all; budgets = c.budgets || {}; cartes = c.cartes || []; fixes = c.fixes || []; cats = c.cats || []; srcs = c.srcs || []; groupes = c.groupes || []; entrees = c.entrees || []; reps = c.reps || {}; clos = c.clos || {}; loaded = true; setSync(false); }
       else { all = []; budgets = {}; loaded = false; }
       setTab('mois'); load();
     }
   }
   function showAuth(){
-    user = null; all = []; budgets = {}; cartes = []; fixes = []; cats = []; srcs = []; applied.clear(); loaded = false;
+    user = null; all = []; budgets = {}; cartes = []; fixes = []; cats = []; srcs = []; groupes = []; entrees = []; reps = {}; clos = {}; applied.clear(); loaded = false; listFilter = null; kind = 'dep';
     closeSheet(true);
     $('app').hidden = true; $('auth').hidden = false; $('a-pass').value = '';
     if (mode === 'recovery') return;
