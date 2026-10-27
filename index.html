@@ -361,6 +361,14 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
 .dot{display:inline-block}
 /* enveloppes */
 #env-w{display:grid;gap:18px}
+.ntstate{display:flex;align-items:center;gap:10px;font-weight:700;background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:14px}
+.ntdot{width:10px;height:10px;border-radius:50%;background:var(--box);flex:none}
+.ntstate.on .ntdot{background:#3fbf8f}
+#v-notif .switch span:first-child{display:block}
+.askcard{display:grid;gap:4px;justify-items:center;text-align:center;background:var(--surface2);border:1px solid var(--line);border-radius:16px;padding:22px 16px;margin-bottom:14px}
+.asklib{font-family:var(--f-display);font-weight:700;font-size:1.3rem}
+.askamt{font-family:var(--f-num);font-weight:700;font-size:1.6rem}
+.askcard small{color:var(--muted);font-size:.88rem}
 .daterange{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .daterange .field{margin-bottom:8px}
 #st-custom{display:grid;gap:4px}
@@ -565,6 +573,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
         <button type="button" data-open="v-groups">Mes catégories et enveloppes<small id="n-grps"></small></button>
         <button type="button" data-open="v-cards">Mes cartes bancaires<small id="n-cards"></small></button>
         <button type="button" data-open="v-srcs">Mes sources de revenus<small id="n-srcs"></small></button>
+        <button type="button" data-open="v-notif">Notifications<small id="n-notif"></small></button>
         <button type="button" data-open="v-cur">Ma monnaie<small id="n-cur"></small></button>
         <button type="button" data-open="v-pass">Changer mon mot de passe</button>
         <button type="button" data-open="v-mail">Changer d'adresse e-mail</button>
@@ -871,6 +880,37 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     <div class="mtable" id="mtable"></div>
   </div>
 
+  <!-- Notifications -->
+  <div class="view" id="v-notif" hidden>
+    <div class="warnbox" id="nt-warn" hidden></div>
+    <div class="ntstate" id="nt-state"><span class="ntdot"></span><span id="nt-state-t">—</span></div>
+    <div class="actions" id="nt-on-w" style="margin:12px 0 4px"><button type="button" class="primary" id="nt-on">Activer sur cet appareil</button></div>
+    <div id="nt-prefs" hidden>
+      <h4>Rappels</h4>
+      <button type="button" class="switch" id="nt-veille" role="switch" aria-checked="true"><span>La veille d'un paiement<small class="hint" style="display:block;font-weight:400">Un résumé de ce qui tombe le lendemain</small></span><span class="tg"></span></button>
+      <div class="field" id="nt-hv-f"><label for="nt-hv">Heure du rappel de la veille</label><div class="selwrap"><select class="inp" id="nt-hv"></select></div></div>
+      <button type="button" class="switch" id="nt-soir" role="switch" aria-checked="true"><span>Le soir même : « C'est payé ? »<small class="hint" style="display:block;font-weight:400">Une relance le lendemain si ce n'est toujours pas coché, puis plus rien</small></span><span class="tg"></span></button>
+      <div class="field" id="nt-hs-f"><label for="nt-hs">Heure de la question du soir</label><div class="selwrap"><select class="inp" id="nt-hs"></select></div></div>
+      <button type="button" class="switch" id="nt-ent" role="switch" aria-checked="true"><span>Inclure les entrées attendues<small class="hint" style="display:block;font-weight:400">« Salaire attendu aujourd'hui : reçu ? »</small></span><span class="tg"></span></button>
+      <div class="twobtn" style="margin-top:4px">
+        <button type="button" class="bigbtn" id="nt-test">Envoyer un test</button>
+        <button type="button" class="bigbtn" id="nt-off">Désactiver ici</button>
+      </div>
+      <p class="note" id="nt-devs" style="margin-top:12px"></p>
+    </div>
+    <div class="err" id="nt-err" role="alert" style="margin-top:10px"></div>
+    <div class="okmsg" id="nt-ok" role="status" style="margin-top:10px"></div>
+  </div>
+
+  <!-- « C'est payé ? » (ouverte depuis une notification) -->
+  <div class="view" id="v-ask" hidden>
+    <div class="askcard"><span class="asklib" id="ask-lib"></span><span class="askamt" id="ask-amt"></span><small id="ask-when"></small></div>
+    <div class="actions">
+      <button type="button" class="ghost" id="ask-no" style="flex:1">Pas encore</button>
+      <button type="button" class="primary" id="ask-yes">Oui, payé</button>
+    </div>
+  </div>
+
   <!-- Supprimer le compte -->
   <div class="view" id="v-del" hidden>
     <p class="note">Votre compte et <b>toutes vos dépenses, budgets, cartes et dépenses fixes</b> seront effacés définitivement, ainsi que vos abonnements et revenus récurrents. Pensez à exporter vos données avant.</p>
@@ -1035,6 +1075,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
       if (!cats.length && !load.initDone) { load.initDone = true; const r = await sb.rpc('initialiser_compte'); if (!r.error) return load(); }
     }
     loaded = true; setSync(true); saveCache(); render();
+    if (pendingRappel) openAsk();
     ensureAround(nowKey()); ensureAround(key(cur));
   }
   async function ensureRecurrences(k, revOnly){
@@ -1347,7 +1388,7 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
   }
 
   /* ---------- panneau ---------- */
-  const VIEWS = ['v-add','v-ent','v-rep','v-clo','v-groups','v-grp','v-cat','v-srcs','v-exp','v-pay','v-bud','v-rec','v-cards','v-cur','v-pass','v-mail','v-stats','v-del'];
+  const VIEWS = ['v-notif','v-ask','v-add','v-ent','v-rep','v-clo','v-groups','v-grp','v-cat','v-srcs','v-exp','v-pay','v-bud','v-rec','v-cards','v-cur','v-pass','v-mail','v-stats','v-del'];
   let editing = null, dirtyCheck = null;
   function openSheet(view, title, isDirty){
     VIEWS.forEach(v => $(v).hidden = v !== view);
@@ -2234,13 +2275,15 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
     $('n-grps').textContent = String(groupes.length);
     $('n-srcs').textContent = String(srcs.length);
     $('n-cur').textContent = CUR;
+    $('n-notif').textContent = pushOk() && Notification.permission === 'granted' ? 'activées' : '';
   }
-  const VIEW_TITLES = { 'v-groups':'Mes catégories et enveloppes', 'v-srcs':'Mes sources de revenus', 'v-cards':'Mes cartes bancaires', 'v-cur':'Ma monnaie', 'v-pass':'Changer mon mot de passe', 'v-mail':"Changer d'adresse e-mail", 'v-del':'Supprimer mon compte' };
+  const VIEW_TITLES = { 'v-notif':'Notifications', 'v-groups':'Mes catégories et enveloppes', 'v-srcs':'Mes sources de revenus', 'v-cards':'Mes cartes bancaires', 'v-cur':'Ma monnaie', 'v-pass':'Changer mon mot de passe', 'v-mail':"Changer d'adresse e-mail", 'v-del':'Supprimer mon compte' };
   document.querySelectorAll('[data-open]').forEach(b => b.onclick = () => {
     const v = b.dataset.open;
     ['p-err','m-err','m-ok','d-err','c-err','cur-err'].forEach(i => $(i).textContent = '');
     if (v === 'v-cards') renderCards();
     if (v === 'v-groups') renderGroups();
+    if (v === 'v-notif') renderNotif();
     if (v === 'v-srcs') renderSrcs();
     if (v === 'v-cur') renderCurrencies();
     if (v === 'v-pass') { $('p-new').value = ''; $('p-new2').value = ''; hidePw(); }
@@ -2555,6 +2598,136 @@ main.wrap{display:grid;gap:18px;padding-block:18px calc(110px + env(safe-area-in
       });
     }
   }
+
+  /* ---------- notifications ---------- */
+  const FN_URL = cfg.SUPABASE_URL.replace(/\/+$/, '') + '/functions/v1/rappels';
+  let ntPrefs = null, ntKey = null, ntV5 = null;
+  const pushOk = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const standalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  const deviceName = () => { const u = navigator.userAgent; return /iPhone/.test(u) ? 'iPhone' : /iPad/.test(u) ? 'iPad' : /Android/.test(u) ? 'Android' : /Mac/.test(u) ? 'Mac' : /Windows/.test(u) ? 'Windows' : 'Navigateur'; };
+  const keyBytes = s => { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return Uint8Array.from(atob(s), c => c.charCodeAt(0)); };
+  const ntMsg = (err, ok) => { $('nt-err').textContent = err || ''; $('nt-ok').textContent = ok || ''; };
+  async function fnCall(body, withSession){
+    const headers = { 'Content-Type': 'application/json', apikey: cfg.SUPABASE_KEY };
+    if (withSession) { const { data } = await sb.auth.getSession(); if (data.session) headers.Authorization = 'Bearer ' + data.session.access_token; }
+    const r = await fetch(FN_URL, { method: 'POST', headers, body: JSON.stringify(body) });
+    let j = {}; try { j = await r.json(); } catch (e) {}
+    if (!r.ok) throw new Error(j.erreur || ('HTTP ' + r.status));
+    return j;
+  }
+  async function currentSub(){ if (!pushOk()) return null; const reg = await navigator.serviceWorker.ready; return reg.pushManager.getSubscription(); }
+  function fillHours(sel, v){ sel.textContent = ''; for (let h = 0; h < 24; h++) { const o = document.createElement('option'); o.value = String(h); o.textContent = h + ' h'; sel.append(o); } sel.value = String(v); }
+  function paintPrefs(){
+    const p = ntPrefs || { veille: true, heure_veille: 20, soir: true, heure_soir: 23, entrees: true };
+    $('nt-veille').setAttribute('aria-checked', p.veille); $('nt-soir').setAttribute('aria-checked', p.soir); $('nt-ent').setAttribute('aria-checked', p.entrees);
+    fillHours($('nt-hv'), p.heure_veille); fillHours($('nt-hs'), p.heure_soir);
+    $('nt-hv-f').hidden = !p.veille; $('nt-hs-f').hidden = !p.soir;
+  }
+  async function renderNotif(){
+    ntMsg(); const w = $('nt-warn'); w.hidden = true;
+    const state = (txt, on) => { $('nt-state-t').textContent = txt; $('nt-state').classList.toggle('on', !!on); };
+    $('nt-prefs').hidden = true; $('nt-on-w').hidden = false; $('nt-on').disabled = false;
+    if (!pushOk()) {
+      w.hidden = false;
+      w.textContent = isIOS && !standalone() ? 'Sur iPhone, les notifications ne fonctionnent que dans l’application installée : ouvrez le carnet depuis son icône sur l’écran d’accueil, puis revenez ici. (iOS 16.4 ou plus récent.)'
+                                             : 'Ce navigateur ne prend pas en charge les notifications.';
+      state('Non disponibles sur cet appareil'); $('nt-on-w').hidden = true; return;
+    }
+    // Base à jour ?
+    const pr = await sb.from('notif_prefs').select('*').maybeSingle();
+    ntV5 = !pr.error;
+    if (!ntV5) { w.hidden = false; w.textContent = 'Exécutez d’abord le fichier supabase-v5-notifications.sql dans Supabase (voir le guide).'; state('Non configurées'); $('nt-on').disabled = true; return; }
+    ntPrefs = pr.data;
+    if (Notification.permission === 'denied') {
+      w.hidden = false; w.textContent = isIOS ? 'Les notifications sont refusées pour cette application. Autorisez-les dans Réglages › Notifications › Dépenses.' : 'Les notifications sont bloquées pour ce site. Autorisez-les dans les réglages du navigateur.';
+    }
+    const sub = await currentSub();
+    const { data: devs } = await sb.from('push_appareils').select('endpoint,appareil');
+    const mine = sub && (devs || []).some(d => d.endpoint === sub.endpoint);
+    if (mine && ntPrefs && ntPrefs.actif) {
+      state('Activées sur cet appareil', true); $('nt-on-w').hidden = true; $('nt-prefs').hidden = false; paintPrefs();
+    } else state('Désactivées sur cet appareil');
+    const n = (devs || []).length;
+    $('nt-devs').textContent = n ? 'Appareils qui reçoivent les rappels : ' + devs.map(d => d.appareil || 'appareil').join(', ') + '.' : '';
+    if (!ntKey) fnCall({ action: 'cle' }).then(j => { ntKey = j.cle; }).catch(() => {}); // préchargée pour l'abonnement
+  }
+  async function savePrefs(patch){
+    ntPrefs = Object.assign({ actif: true, veille: true, heure_veille: 20, soir: true, heure_soir: 23, entrees: true }, ntPrefs || {}, patch,
+      { user_id: user.id, fuseau: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Paris' });
+    paintPrefs();
+    const { error } = await sb.from('notif_prefs').upsert(ntPrefs, { onConflict: 'user_id' });
+    if (error) { ntMsg("Le réglage n'a pas été enregistré."); console.error(error); }
+  }
+  $('nt-on').onclick = async () => {
+    ntMsg(); $('nt-on').disabled = true;
+    try {
+      const perm = await Notification.requestPermission();
+      if (perm !== 'granted') { ntMsg('Notifications refusées. Vous pourrez les autoriser plus tard dans les réglages.'); return; }
+      if (!ntKey) ntKey = (await fnCall({ action: 'cle' })).cle;
+      const reg = await navigator.serviceWorker.ready;
+      let sub = await reg.pushManager.getSubscription();
+      if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(ntKey) });
+      const j = sub.toJSON();
+      const { error } = await sb.from('push_appareils').upsert({ user_id: user.id, endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, appareil: deviceName() }, { onConflict: 'endpoint' });
+      if (error) throw error;
+      await savePrefs({ actif: true });
+      await renderNotif(); ntMsg('', 'Notifications activées. Touchez « Envoyer un test » pour vérifier.');
+    } catch (e) {
+      console.error(e);
+      ntMsg(/HTTP 404|Failed to fetch|NetworkError|Load failed/i.test(e.message || '') ? 'La fonction « rappels » est introuvable dans Supabase : créez-la d’abord (voir le guide).' : "L'activation n'a pas abouti : " + (e.message || e));
+    } finally { $('nt-on').disabled = false; }
+  };
+  $('nt-off').onclick = async () => {
+    ntMsg();
+    try {
+      const sub = await currentSub();
+      if (sub) { await sb.from('push_appareils').delete().eq('endpoint', sub.endpoint); await sub.unsubscribe(); }
+      await renderNotif(); ntMsg('', 'Cet appareil ne recevra plus de rappels.');
+    } catch (e) { ntMsg("La désactivation n'a pas abouti."); }
+  };
+  $('nt-test').onclick = async () => {
+    ntMsg(); $('nt-test').disabled = true;
+    try { const j = await fnCall({ action: 'test' }, true); ntMsg('', 'Test envoyé (' + (j.resultats || []).join(', ') + '). Il doit arriver dans quelques secondes.'); }
+    catch (e) { ntMsg("Le test n'a pas abouti : " + e.message); }
+    finally { $('nt-test').disabled = false; }
+  };
+  $('nt-veille').onclick = () => savePrefs({ veille: !(ntPrefs && ntPrefs.veille !== false) });
+  $('nt-soir').onclick = () => savePrefs({ soir: !(ntPrefs && ntPrefs.soir !== false) });
+  $('nt-ent').onclick = () => savePrefs({ entrees: !(ntPrefs && ntPrefs.entrees !== false) });
+  $('nt-hv').onchange = () => savePrefs({ heure_veille: Number($('nt-hv').value) });
+  $('nt-hs').onchange = () => savePrefs({ heure_soir: Number($('nt-hs').value) });
+
+  /* « C'est payé ? » depuis une notification */
+  let askTarget = null, pendingRappel = null;
+  function checkRappel(url){
+    const u = new URL(url || location.href);
+    if (!u.searchParams.get('rappel')) return;
+    pendingRappel = { t: u.searchParams.get('t'), id: u.searchParams.get('id'), d: u.searchParams.get('d') };
+    if (!url) history.replaceState(null, '', location.pathname);
+    if (loaded) openAsk();
+  }
+  function openAsk(){
+    const r = pendingRappel; if (!r) return; pendingRappel = null;
+    const item = r.t === 'entree' ? entrees.find(e => e.id === r.id) : all.find(d => d.id === r.id);
+    if (!item) { toast('Ce paiement n’existe plus dans votre carnet.'); return; }
+    if (r.t === 'entree' ? item.recue : item.payee) { toast('« ' + (item.libelle || item.source) + ' » est déjà ' + (r.t === 'entree' ? 'reçue.' : 'cochée.')); return; }
+    askTarget = { r, item };
+    $('ask-lib').textContent = item.libelle || item.source;
+    $('ask-amt').textContent = eur.format(item.montant);
+    const d = r.d || item.date;
+    $('ask-when').textContent = (r.t === 'entree' ? 'Attendue le ' : 'Prévue le ') + (d ? fmtDayLong(d) : '—') + (r.t === 'entree' ? ' · ' + item.source : (item.moyen ? ' · ' + item.moyen : ''));
+    $('ask-yes').textContent = r.t === 'entree' ? 'Oui, reçue' : 'Oui, payé';
+    openSheet('v-ask', r.t === 'entree' ? 'Vous l’avez reçue ?' : 'C’est payé ?');
+  }
+  $('ask-yes').onclick = async () => {
+    const a = askTarget; closeSheet(true); if (!a) return;
+    if (a.r.t === 'entree') { await setRecue(a.item, true); toast('« ' + (a.item.libelle || a.item.source) + ' » cochée comme reçue'); }
+    else { await setPaid(a.item, true, a.r.d || a.item.date || todayIso()); toast('« ' + a.item.libelle + ' » cochée comme payée'); }
+  };
+  $('ask-no').onclick = () => { closeSheet(true); toast('D’accord, elle reste à cocher.'); };
+  if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', ev => { if (ev.data && ev.data.type === 'rappel') { checkRappel(ev.data.url); if (loaded) openAsk(); } });
+  checkRappel();
 
   /* ---------- connexion ---------- */
   let mode = 'login';
